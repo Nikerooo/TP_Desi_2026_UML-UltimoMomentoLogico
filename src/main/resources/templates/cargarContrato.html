@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/css/cargarContrato.css">
+  <title>Nuevo Contrato - HogarYA</title>
+
+</head>
+
+
+<body>
+
+	<div class="container">
+	
+	  <div class="header">
+	    <div>
+	      <h1>Nuevo contrato</h1>
+	      <p>Completá todos los datos para registrar el contrato</p>
+	    </div>
+	    <span class="badge">📄 Borrador</span>
+	  </div>
+	
+	  <div class="info-box">
+	    ℹ️ La propiedad seleccionada debe estar disponible para el período indicado.
+	    El sistema validará esto antes de guardar.
+	  </div>
+	
+	  <!-- Sección 1: Partes -->
+	  <div class="form-section">
+	    <h2>Propiedad y partes</h2>
+	    <div class="form-grid">
+	
+	      <div class="form-group full">
+	        <label for="propiedad">Propiedad <span class="required">*</span></label>
+	        <select id="propiedad">
+	          <option value="">Seleccioná una propiedad disponible</option>
+	          <option value="1">Av. Corrientes 1234 - Depto - Almagro</option>
+	          <option value="2">Av. Santa Fe 567 - Local - Palermo</option>
+	        </select>
+	      </div>
+	
+	      <div class="form-group">
+	        <label for="propietario">Propietario <span class="required">*</span></label>
+	        <select id="propietario">
+	          <option value="">Seleccioná el propietario</option>
+	          <option value="1">García, Juan (DNI 12.345.678)</option>
+	          <option value="2">López, María (DNI 23.456.789)</option>
+	        </select>
+	      </div>
+	
+	      <div class="form-group">
+	        <label for="inquilino">Inquilino <span class="required">*</span></label>
+	        <select id="inquilino">
+	          <option value="">Seleccioná el inquilino</option>
+	          <option value="3">Rodríguez, Carlos (DNI 34.567.890)</option>
+	          <option value="4">Martínez, Ana (DNI 45.678.901)</option>
+	        </select>
+	      </div>
+	
+	    </div>
+	  </div>
+	
+	  <!-- Sección 2: Vigencia -->
+	  <div class="form-section">
+	    <h2>Vigencia</h2>
+	    <div class="form-grid three">
+	
+	      <div class="form-group">
+	        <label for="fechaInicio">Fecha de inicio <span class="required">*</span></label>
+	        <input type="date" id="fechaInicio" />
+	      </div>
+	
+	      <div class="form-group">
+	        <label for="duracionMeses">Duración (meses) <span class="required">*</span></label>
+	        <input type="number" id="duracionMeses" min="1" placeholder="Ej: 24" />
+	      </div>
+	
+	      <div class="form-group">
+	        <label for="fechaFin">Fecha de fin (calculada)</label>
+	        <input type="date" id="fechaFin" disabled />
+	      </div>
+	
+	    </div>
+	  </div>
+	
+	  <!-- Sección 3: Condiciones económicas -->
+	  <div class="form-section">
+	    <h2>Condiciones económicas</h2>
+	    <div class="form-grid">
+	
+	      <div class="form-group">
+	        <label for="importeMensual">Importe mensual ($) <span class="required">*</span></label>
+	        <input type="number" id="importeMensual" min="0" placeholder="Ej: 150000" />
+	      </div>
+	
+	      <div class="form-group">
+	        <label for="diaVencimiento">Día de vencimiento mensual <span class="required">*</span></label>
+	        <input type="number" id="diaVencimiento" min="1" max="28" placeholder="Ej: 10" />
+	      </div>
+	
+	    </div>
+	  </div>
+	
+	  <!-- Sección 4: Observaciones -->
+	  <div class="form-section">
+	    <h2>Observaciones</h2>
+	    <div class="form-group">
+	      <label for="descripcion">Descripción / cláusulas adicionales</label>
+	      <textarea id="descripcion" placeholder="Ingresá condiciones especiales, cláusulas o notas relevantes..."></textarea>
+	    </div>
+	  </div>
+	
+	  <!-- Botones -->
+	  <div class="btn-row">
+	    <button type="button" onclick="guardarBorrador()">Guardar borrador</button>
+	    <button type="button" class="primary" onclick="activarContrato()">Activar contrato</button>
+	  </div>
+
+</div>
+
+<script>
+  // Calcula fecha de fin automáticamente
+  const fechaInicio   = document.getElementById('fechaInicio');
+  const duracionMeses = document.getElementById('duracionMeses');
+  const fechaFin      = document.getElementById('fechaFin');
+
+  function calcularFechaFin() {
+    if (!fechaInicio.value || !duracionMeses.value) return;
+    const d = new Date(fechaInicio.value);
+    d.setMonth(d.getMonth() + parseInt(duracionMeses.value));
+    fechaFin.value = d.toISOString().split('T')[0];
+  }
+
+  fechaInicio.addEventListener('change', calcularFechaFin);
+  duracionMeses.addEventListener('input', calcularFechaFin);
+
+  // Recolecta los datos del formulario
+  function recolectarDatos() {
+    return {
+      propiedadId:    document.getElementById('propiedad').value,
+      propietarioId:  document.getElementById('propietario').value,
+      inquilinoId:    document.getElementById('inquilino').value,
+      fechaInicio:    fechaInicio.value,
+      duracionMeses:  duracionMeses.value,
+      fechaFin:       fechaFin.value,
+      importeMensual: document.getElementById('importeMensual').value,
+      diaVencimiento: document.getElementById('diaVencimiento').value,
+      descripcion:    document.getElementById('descripcion').value,
+    };
+  }
+
+  // Botón: Guardar borrador
+  // En el proyecto real, esto llama a ContratoService.guardarBorrador(datos)
+  function guardarBorrador() {
+    const datos = recolectarDatos();
+    console.log('Guardando borrador:', datos);
+    alert('Borrador guardado. Estado: BORRADOR');
+  }
+
+  // Botón: Activar contrato
+  // En el proyecto real, esto llama a ContratoService.activar(datos)
+  // que valida disponibilidad de propiedad antes de persistir
+  function activarContrato() {
+    const datos = recolectarDatos();
+    if (!datos.propiedadId || !datos.propietarioId || !datos.inquilinoId ||
+        !datos.fechaInicio || !datos.duracionMeses ||
+        !datos.importeMensual || !datos.diaVencimiento) {
+      alert('Completá todos los campos obligatorios antes de activar.');
+      return;
+    }
+    console.log('Activando contrato:', datos);
+    alert('Contrato activado correctamente. Estado: ACTIVO');
+  }
+</script>
+
+</body>
+</html>

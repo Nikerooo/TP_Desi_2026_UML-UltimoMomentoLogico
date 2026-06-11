@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Visita{
 	
+	@Id
 	private long id;
 	private LocalDateTime fechaHora;
 	private EstadoVisita estado;
