@@ -29,6 +29,10 @@ public class Incidente{
 	private String responsableTecnico;
 	
 	
+	@ManyToOne
+	private Contrato contrato;
+	
+	
 	// CONSTRUCTORES
 	
 	public Incidente() {

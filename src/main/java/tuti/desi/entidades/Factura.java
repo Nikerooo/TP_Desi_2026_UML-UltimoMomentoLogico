@@ -25,6 +25,10 @@ public class Factura {
 	private BigDecimal interes;
 	private String conceptoFacturado;
 	
+	@ManyToOne
+	@JoinColumn(name = "contrato_id")
+	private Contrato contrato;
+	
 	
 	public Factura() {
 		
