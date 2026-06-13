@@ -3,6 +3,7 @@ package tuti.desi.entidades;
 
 import jakarta.persistence.*;
 //import jakarta.validation.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import tuti.desi.enums.*;
 import tuti.desi.historial.*;
@@ -23,6 +24,8 @@ public class Contrato {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	// Hace que la PK sea auto incremental
 	private long id;
+	
+	@DateTimeFormat(pattern = "dd-mm-yyyy")
 	private LocalDate fechaInicio;
 	private int duracionMeses;
 	private BigDecimal importeMensual;

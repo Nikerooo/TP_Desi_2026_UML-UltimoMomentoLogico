@@ -12,8 +12,8 @@
 <body>
 
 	<div>
-	        <h1>Cargar contrato</h1>
-	    </div>
+	   <h1>Cargar contrato</h1>
+	</div>
 		
 	    <form th:object="${contrato}" method="POST" th:action="@{/contratos/guardar}" class="formulario"> 
 		<!-- th:object= Guarda toda la informacion en contrato ,  -->	
@@ -52,21 +52,21 @@
 	        		
 			<div class="cargarDuracionMeses" style="margin-top: 15px;">
 				<label>Cargar la duracion en meses</label>
-				<input type="number">
+				<input type="number" th:field="*{duracionMeses}">
 			</div>
 			
 			
 			
 			<div class="cargarImporteMensual" style="margin-top: 15px;">
 				<label>Cargue el importe mensual</label>
-				<input type="number">
+				<input type="number" th:field="*{importeMensual}">
 			</div>
 			
 			
 			
 			<div class="cargarDiaVencimiento" style="margin-top: 15px;">
 				<label>Indique el dia de vencimiento</label>
-				<input type="number">
+				<input type="number" th:field="*{diaVencimientoMensual}">
 			</div>
 			
 			
@@ -74,12 +74,12 @@
 			
 			<div class="cargarDescripcion" style="margin-top: 15px;">
 				<label>Cargar la descripcion</label>
-				<input type="text">
+				<input type="text" th:field="*{descripcion}">
 			</div>
 			
 			
 			
-			<div style="margin-top: 25px;">
+			<div class="btn-submite" style="margin-top: 25px;">
 		    	<button type="submit">Guardar Contrato</button>
 			</div>
 			

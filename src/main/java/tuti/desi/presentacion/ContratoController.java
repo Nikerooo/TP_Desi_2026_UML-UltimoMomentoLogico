@@ -37,6 +37,18 @@ import java.util.ArrayList;
 	        return "cargarContrato";
 	    }
 	
+	    @PostMapping("/nuevo/guardar")
+	    public void tomarDatos(@ModelAttribute("contrato") Contrato contrato) {	// 
+	    	
+	    	System.out.println("Se registro con exito la propiedad con ID: " + contrato.getPropiedad().getId());
+	    	System.out.println("Se registro con exito el inquilino con ID: " + contrato.getInquilino().getId());
+	    	System.out.println("Se registro con exito la fecha de inicio: "+ contrato.getFechaInicio());
+	    	System.out.println("Se registro con exito la fecha de inicio: "+ contrato.getImporteMensual());
+	    	System.out.println("Se registro con exito la fecha de inicio: "+ contrato.getDiaVencimientoMensual());
+	    	
+	    }
+	    
+	    
 	    
 	    @GetMapping("/modificar")
 	    public String modificarContrato(Model model) {
