@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/css/cargarContrato.css">
+  <title>Nuevo Contrato - HogarYA</title>
+
+</head>
+
+
+<body>
+
+	<div>
+	   <h1>Cargar contrato</h1>
+	</div>
+		
+	    <form th:object="${contrato}" method="POST" th:action="@{/contratos/guardar}" class="formulario"> 
+		<!-- th:object= Guarda toda la informacion en contrato ,  -->	
+			
+	        <div class="cargarPropiedad">
+	            <label>Elegir propiedad:</label>
+	            <select class="elegirPropiedad" th:field="*{propiedad.id}">
+	                <option value="0">Seleccione una propiedad</option>
+	                <option th:each="prop : ${listaPropiedades}"	
+	                        th:value="${prop.id}"
+	                        th:text="${prop.direccion}">
+	                </option>
+	            </select>
+	        </div>
+			
+			
+			
+	        <div class="cargarInquilino" style="margin-top: 15px;">
+	            <label>Elegir inquilino:</label>
+	            <select class="elegirInquilino" th:field="*{inquilino.id}">
+	                <option value="0">Seleccione un inquilino</option>
+	                <option th:each="inq : ${listaInquilinos}"
+	                        th:value="${inq.id}"
+	                        th:text="${inq.nombre}">
+	                </option>
+	            </select>
+	        </div>
+			
+			
+			
+	        <div class="cargarFecha" style="margin-top: 15px;">
+	            <label>Elegir Fecha de inicio:</label>
+	            <input type="date" th:field="*{fechaInicio}">	
+	        </div>
+			
+	        		
+			<div class="cargarDuracionMeses" style="margin-top: 15px;">
+				<label>Cargar la duracion en meses</label>
+				<input type="number" th:field="*{duracionMeses}">
+			</div>
+			
+			
+			
+			<div class="cargarImporteMensual" style="margin-top: 15px;">
+				<label>Cargue el importe mensual</label>
+				<input type="number" th:field="*{importeMensual}">
+			</div>
+			
+			
+			
+			<div class="cargarDiaVencimiento" style="margin-top: 15px;">
+				<label>Indique el dia de vencimiento</label>
+				<input type="number" th:field="*{diaVencimientoMensual}">
+			</div>
+			
+			
+			
+			
+			<div class="cargarDescripcion" style="margin-top: 15px;">
+				<label>Cargar la descripcion</label>
+				<input type="text" th:field="*{descripcion}">
+			</div>
+			
+			
+			
+			<div class="btn-submite" style="margin-top: 25px;">
+		    	<button type="submit">Guardar Contrato</button>
+			</div>
+			
+	    </form>
+
+	</body>
+</html>
