@@ -27,6 +27,7 @@
 	                        th:text="${prop.direccion}">
 	                </option>
 	            </select>
+				
 	        </div>
 			
 			
@@ -35,11 +36,14 @@
 	            <label>Elegir inquilino:</label>
 	            <select class="elegirInquilino" th:field="*{inquilino.id}">
 	                <option value="0">Seleccione un inquilino</option>
-	                <option th:each="inq : ${listaInquilinos}"
-	                        th:value="${inq.id}"
-	                        th:text="${inq.nombre}">
-	                </option>
+					<option th:each="inq : ${listaInquilinos}"	
+						    th:value="${inq.id}"
+						    th:text="${inq.nombre}">
+					</option>
 	            </select>
+				
+
+				
 	        </div>
 			
 			
@@ -47,12 +51,24 @@
 	        <div class="cargarFecha" style="margin-top: 15px;">
 	            <label>Elegir Fecha de inicio:</label>
 	            <input type="date" th:field="*{fechaInicio}">	
+				
+				<p th:if="${#fields.hasErrors('fechaInicio')}" 
+					th:errors="*{fechaInicio}" 
+					style="color: red; font-size: 0.9em; margin-top: 5px;">
+				</p>
+				
 	        </div>
 			
 	        		
 			<div class="cargarDuracionMeses" style="margin-top: 15px;">
 				<label>Cargar la duracion en meses</label>
 				<input type="number" th:field="*{duracionMeses}">
+				
+				<p th:if="${#fields.hasErrors('duracionMeses')}" 
+					th:errors="*{duracionMeses}" 
+					style="color: red; font-size: 0.9em; margin-top: 5px;">
+				</p>
+								
 			</div>
 			
 			
@@ -60,6 +76,12 @@
 			<div class="cargarImporteMensual" style="margin-top: 15px;">
 				<label>Cargue el importe mensual</label>
 				<input type="number" th:field="*{importeMensual}">
+				
+				<p th:if="${#fields.hasErrors('importeMensual')}" 
+					th:errors="*{importeMensual}" 
+					style="color: red; font-size: 0.9em; margin-top: 5px;">
+				</p>
+				
 			</div>
 			
 			
@@ -67,6 +89,11 @@
 			<div class="cargarDiaVencimiento" style="margin-top: 15px;">
 				<label>Indique el dia de vencimiento</label>
 				<input type="number" th:field="*{diaVencimientoMensual}">
+				
+				<p th:if="${#fields.hasErrors('diaVencimientoMensual')}" 
+					th:errors="*{duracionMeses}" 
+					style="color: red; font-size: 0.9em; margin-top: 5px;">
+				</p>
 			</div>
 			
 			
@@ -75,6 +102,12 @@
 			<div class="cargarDescripcion" style="margin-top: 15px;">
 				<label>Cargar la descripcion</label>
 				<input type="text" th:field="*{descripcion}">
+
+				<p th:if="${#fields.hasErrors('descripcion')}" 
+					th:errors="*{descripcion}" 
+					style="color: red; font-size: 0.9em; margin-top: 5px;">
+				</p>
+				
 			</div>
 			
 			
