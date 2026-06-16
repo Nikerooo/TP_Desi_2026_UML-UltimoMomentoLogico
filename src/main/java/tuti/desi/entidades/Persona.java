@@ -75,6 +75,10 @@ public class Persona {
 	
 	// setters
 	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}

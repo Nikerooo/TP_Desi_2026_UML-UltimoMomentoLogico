@@ -2,8 +2,11 @@ package tuti.desi.entidades;
 
 
 import jakarta.persistence.*;
-//import jakarta.validation.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+
 
 import tuti.desi.enums.*;
 import tuti.desi.historial.*;
@@ -25,11 +28,25 @@ public class Contrato {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	// Hace que la PK sea auto incremental
 	private long id;
 	
-	@DateTimeFormat(pattern = "dd-mm-yyyy")
+	@NotNull(message = "Debe ingresar una fecha de inicio")
+	@FutureOrPresent(message = "La fecha de inicio no puede ser en el pasado")
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private LocalDate fechaInicio;
+	
+	@NotNull(message = "Debe ingresar la duracion duracion en meses")
+	@Min(value = 1, message = "El importe debe ser mayor a 0")
 	private int duracionMeses;
+	
+	@NotNull(message = "Debe ingresar el importe mensual")
+	@Min(value = 1, message = "El importe debe ser mayor a 0")
 	private BigDecimal importeMensual;
+	
+	@Min(value=1, message="Ingresa un numero positivo")
+	@Max(value=31, message="Ingrese un numero menor a 31")
+	@NotNull(message = "Debe ingresar un dia de vencimiento")
 	private int diaVencimientoMensual;
+	
+	@NotNull(message = "Debe ingresar una descripcion")
 	private String descripcion;
 	
 	

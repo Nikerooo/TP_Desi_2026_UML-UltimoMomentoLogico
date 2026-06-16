@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tuti.desi.entidades.Contrato;
 import tuti.desi.enums.EstadoContrato;
-import tuti.desi.persistencia.contratoPersistencia;
- 
+import tuti.desi.persistencia.*;
+import tuti.desi.entidades.*; 
+
 import java.util.List;
  
 @Service
@@ -14,10 +15,27 @@ public class contratoServicios {
  
     @Autowired
     private contratoPersistencia contratoRepo;	// Creamos el obj que nos ayude con la persistencia y coneccion con la bd
- 
- 
+    @Autowired
+    private personaPersistencia personaRepo;
+    @Autowired
+    private propiedadPersistencia propiedadRepo;
 
     public Contrato crear(Contrato contrato) {
+    	
+    	
+
+    	Long idPropiedad = contrato.getPropiedad().getId();
+        Long idInquilino = contrato.getInquilino().getId();
+
+
+        Propiedad propiedadExistente = propiedadRepo.findById(idPropiedad).orElse(null);
+        Persona inquilinoExistente = personaRepo.findById(idInquilino).orElse(null);
+
+
+        if (propiedadExistente == null || inquilinoExistente == null) {
+            throw new IllegalArgumentException("La propiedad o el inquilino no existen en la BD.");
+        }
+    	
         contrato.cambiarEstado(EstadoContrato.BORRADOR); // registra en historial
         return contratoRepo.save(contrato);
     }
@@ -78,5 +96,8 @@ public class contratoServicios {
     public List<Contrato> listarPorEstado(EstadoContrato estado) {
         return contratoRepo.findByEstado(estado);
     }
+    
+    
+    
 }
  
