@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/css/cargarContrato.css">
+  <title>Moficiar contrato - HogarYA</title>
+
+</head>
+	<body>
+	
+		
+		
+		<div>
+		   <h1>Modificar / eliminar contratos</h1>
+		</div>
+		
+		
+		<div class="panel">
+	        <form th:object="${contrato}" method="POST" th:action="@{/contratos/modificar}" class="formulario"> 
+			<!-- th:object= Guarda toda la informacion en contrato , th:action= , -->	
+	
+				<div class="cargarcontrato">
+					
+					<label>Elegir contrato:</label>
+					<select class="elegirContrato" th:field="*{id}">
+						<option th:each="con : ${listaContrato}"	
+								th:value="${con.id}"
+								th:text="${con.id}">
+						</option>
+					</select>
+								
+				</div>
+	
+				<!-- Botones para seleccionar que se quiere hacer -->
+				<div class="btn-submite" style="margin-top: 25px; display: flex; gap: 10px;">
+					<button type="submit" th:formaction="@{/contratos/prepararModificar}">Modificar</button>
+					<button type="submit" th:formaction="@{/contratos/borrar}" style="background-color: #dc3545;">Borrar</button>
+					<button type="submit" th:formaction="@{/contratos/listar}" formmethod="GET">Listar Todos</button>
+				</div>
+				
+		    </form>
+		</div>
+		
+		<hr style="margin-top: 15px; margin-bottom: 15px;"> <!-- Linea divisora -->
+		
+		
+		
+		
+		
+		
+		
+		<div class="formulario-edicion" th:if="${modo == 'modificar'}"> 	<!-- Se muestra unicamente cuando modo == modificar, eso lo devuelven los botones -->
+			
+			<div>
+				<h2>Modificar contratos</h2>
+			</div>
+			
+			<form th:object="${contrato}" method="POST" th:action="@{/contratos/modificar}" class="formulario">
+			            
+	            <div>
+	                <label>ID del Contrato:</label>	<!-- Se muestra unicamente el ID -->
+	                <input type="text" th:field="*{id}" readonly style="cursor: not-allowed;">
+	            </div>
+
+				
+				<div class="cargarPropiedad" style="margin-top: 15px;">
+				    <label>Cambiar propiedad de alquiler:</label>
+				    <select th:field="*{propiedad.id}">
+				        <option th:each="prop : ${listaPropiedades}"	
+				                th:value="${prop.id}"
+				                th:text="${prop.direccion}">
+				        </option>
+				    </select>
+				</div>
+
+				
+				
+				<div class="cargarInquilino" style="margin-top: 15px;">
+				    <label>Cambiar Inquilino:</label>
+				    <select th:field="*{inquilino.id}">
+				        <option th:each="inq : ${listaInquilinos}"	
+				                th:value="${inq.id}"
+				                th:text="${inq.nombre}">
+				        </option>
+				    </select>
+				</div>
+				
+				
+				<div class="cargarFecha" style="margin-top: 15px;">
+		            <label>Elegir Fecha de inicio:</label>
+		            <input type="date" th:field="*{fechaInicio}">	
+					
+					<p th:if="${#fields.hasErrors('fechaInicio')}" 
+						th:errors="*{fechaInicio}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+					
+		        </div>
+				
+		        		
+				<div class="cargarDuracionMeses" style="margin-top: 15px;">
+					<label>Cargar la duracion en meses</label>
+					<input type="number" th:field="*{duracionMeses}">
+					
+					<p th:if="${#fields.hasErrors('duracionMeses')}" 
+						th:errors="*{duracionMeses}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+									
+				</div>
+				
+				
+				
+				<div class="cargarImporteMensual" style="margin-top: 15px;">
+					<label>Cargue el importe mensual</label>
+					<input type="number" th:field="*{importeMensual}">
+					
+					<p th:if="${#fields.hasErrors('importeMensual')}" 
+						th:errors="*{importeMensual}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+					
+				</div>
+				
+				
+				
+				<div class="cargarDiaVencimiento" style="margin-top: 15px;">
+					<label>Indique el dia de vencimiento</label>
+					<input type="number" th:field="*{diaVencimientoMensual}">
+					
+					<p th:if="${#fields.hasErrors('diaVencimientoMensual')}" 
+						th:errors="*{diaVencimientoMensual}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+				</div>
+				
+				
+				
+				
+				<div class="cargarDescripcion" style="margin-top: 15px;">
+					<label>Cargar la descripcion</label>
+					<input type="text" th:field="*{descripcion}">
+
+					<p th:if="${#fields.hasErrors('descripcion')}" 
+						th:errors="*{descripcion}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+					
+				</div>
+
+				
+	            <div class="cargarEstado" style="margin-top: 15px;">
+	                <label>Estado del contrato:</label>
+	                <select th:field="*{estado}">
+	                    <option value="BORRADOR">Borrador</option>
+	                    <option value="ACTIVO">Activo</option>
+	                    <option value="FINALIZADO">Finalizado</option>
+	                    <option value="RESCINDIDO">Rescindido</option>
+	                </select>
+	            </div>
+
+				
+	            <div class="btn-submite" style="margin-top: 25px;">
+	                <button type="submit">Guardar Cambios</button>
+	            </div>
+	        </form>
+			
+			
+			
+		</div>
+
+	</body>
+</html>

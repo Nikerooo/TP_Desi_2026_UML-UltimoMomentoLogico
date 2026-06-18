@@ -16,4 +16,7 @@ public interface propiedadPersistencia extends JpaRepository<Propiedad, Long> {
 	
 	@Query("SELECT p FROM Propiedad p WHERE p.eliminada = false")
     List<Propiedad> buscarTodasActivas();
+	
+	
+	
 }
