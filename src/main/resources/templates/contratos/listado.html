@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Contratos</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <header class="page-header">
+        <h1>Gestión de Contratos</h1>
+        <a th:href="@{/contratos/nuevo}" class="btn btn-primary">+ Nuevo Contrato</a>
+    </header>
+
+    <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+    <div th:if="${mensajeError}" class="alert alert-error"   th:text="${mensajeError}"></div>
+
+    <!-- Filtros (HU 3.4) -->
+    <section class="filtros-section">
+        <h2>Filtros</h2>
+        <form th:action="@{/contratos/listado}" method="get" class="filtros-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Propiedad</label>
+                    <select name="propiedadId" class="form-control">
+                        <option value="">-- Todas --</option>
+                        <option th:each="p : ${propiedades}"
+                                th:value="${p.id}"
+                                th:text="${p.getDireccionCompleta()}"
+                                th:selected="${filtroPropiedadId != null and filtroPropiedadId == p.id}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Inquilino</label>
+                    <select name="inquilinoId" class="form-control">
+                        <option value="">-- Todos --</option>
+                        <option th:each="i : ${inquilinos}"
+                                th:value="${i.id}"
+                                th:text="${i.getNombreCompleto()}"
+                                th:selected="${filtroInquilinoId != null and filtroInquilinoId == i.id}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select name="estado" class="form-control">
+                        <option value="">-- Todos --</option>
+                        <option th:each="est : ${estadosContrato}"
+                                th:value="${est.name()}"
+                                th:text="${est.descripcion}"
+                                th:selected="${filtroEstado != null and filtroEstado == est}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="filtros-acciones">
+                <button type="submit" class="btn btn-secondary">Buscar</button>
+                <a th:href="@{/contratos/listado}" class="btn btn-link">Limpiar</a>
+            </div>
+        </form>
+    </section>
+
+    <!-- Tabla -->
+    <section class="tabla-section">
+        <div th:if="${#lists.isEmpty(contratos)}" class="sin-resultados">
+            No se encontraron contratos.
+        </div>
+        <table th:unless="${#lists.isEmpty(contratos)}" class="tabla">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Propiedad</th>
+                    <th>Propietario</th>
+                    <th>Inquilino</th>
+                    <th>Fecha Inicio</th>
+                    <th>Importe Mensual</th>
+                    <th>Día Vcto.</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${contratos}">
+                    <td th:text="${c.id}"></td>
+                    <td th:text="${c.propiedad != null ? c.propiedad.getDireccionCompleta() : '-'}"></td>
+                    <td th:text="${c.propiedad?.propietario != null ? c.propiedad.propietario.getNombreCompleto() : '-'}"></td>
+                    <td th:text="${c.inquilino != null ? c.inquilino.getNombreCompleto() : '-'}"></td>
+                    <td th:text="${c.fechaInicio != null ? #temporals.format(c.fechaInicio,'dd/MM/yyyy') : '-'}"></td>
+                    <td th:text="${'$' + c.importeMensual}"></td>
+                    <td th:text="${c.diaVencimientoMensual}"></td>
+                    <td>
+                        <span th:text="${c.estado.descripcion}"
+                              th:classappend="${'badge badge-' + c.estado.name().toLowerCase()}">
+                        </span>
+                    </td>
+                    <td class="acciones">
+                        <a th:href="@{/contratos/modificar/{id}(id=${c.id})}"
+                           class="btn btn-sm btn-warning">Editar</a>
+                        <form th:if="${c.estado.name() == 'BORRADOR'}"
+                              th:action="@{/contratos/eliminar/{id}(id=${c.id})}"
+                              method="post" style="display:inline;"
+                              onsubmit="return confirm('¿Eliminar este contrato?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                        <span th:unless="${c.estado.name() == 'BORRADOR'}"
+                              class="text-muted text-sm">Solo borrador</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="page-footer">
+        <a th:href="@{/}" class="btn btn-link">← Inicio</a>
+    </div>
+
+</div>
+</body>
+</html>

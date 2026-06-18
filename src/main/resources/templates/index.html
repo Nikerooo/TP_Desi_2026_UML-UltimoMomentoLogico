@@ -1,24 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Menú Principal</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <meta charset="UTF-8"/>
+    <title>Menú Principal — Inmobiliaria DESI 2026</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}"/>
 </head>
 <body>
-   <div class="starter-template">
-        <h1>Ejemplo Spring Boot Web Thymeleaf </h1>
-        <h2>
-            <span th:text="'Bienvenido'"></span>
-        </h2>
-    </div>
-    
+<div class="starter-template">
+    <h1>Sistema de Gestión Inmobiliaria</h1>
+    <h2>DESI 2026 — TP Integrador</h2>
+</div>
 
-    <div class="menu">
-        <a th:href="@{/contratos/nuevo}">Cargar Contratos</a>
-		<a th:href="@{/contratos/modificar}">Modificar Contratos</a>
-
-    </div>
-
+<div class="menu">
+    <a th:href="@{/contratos/listado}">📋 Gestionar Contratos</a>
+    <a th:href="@{/contratos/nuevo}">➕ Nuevo Contrato</a>
+    <a th:href="@{/publicaciones}">📢 Gestionar Publicaciones</a>
+    <a th:href="@{/publicaciones/nueva}">➕ Nueva Publicación</a>
+</div>
 </body>
 </html>
