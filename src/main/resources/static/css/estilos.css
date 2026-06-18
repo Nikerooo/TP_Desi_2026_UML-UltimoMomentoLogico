@@ -1,0 +1,252 @@
+@charset "UTF-8";
+
+/* ════════════════════════════════════════════
+   estilos.css — TP Integrador DESI 2026
+   Unifica main.css original + Epic 2
+   ════════════════════════════════════════════ */
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    background-color: #f4f6f9;
+    color: #333;
+    line-height: 1.5;
+    padding-top: 5rem;
+}
+
+/* ── Contenedor ── */
+.container {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+}
+
+/* ── Starter template (compatibilidad original) ── */
+.starter-template {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+h1 { color: #2c5f8a; font-size: 1.6rem; }
+h2 { color: #c0392b; font-size: 1.2rem; }
+
+/* ── Menú principal (compatibilidad original) ── */
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 0.5rem;
+}
+
+.menu a {
+    text-decoration: none;
+    background-color: #2c5f8a;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.15s;
+    display: inline-block;
+    width: 280px;
+    text-align: center;
+}
+
+.menu a:hover { background-color: #1e4570; transform: scale(1.02); }
+
+/* ── Alertas ── */
+.alert {
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.alert-error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* ── Cabecera de página ── */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #2c5f8a;
+}
+
+/* ── Botones ── */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s;
+}
+
+.btn-primary   { background-color: #2c5f8a; color: #fff; }
+.btn-primary:hover { background-color: #1e4570; }
+.btn-secondary { background-color: #6c757d; color: #fff; }
+.btn-secondary:hover { background-color: #545b62; }
+.btn-warning   { background-color: #e0a800; color: #fff; }
+.btn-warning:hover { background-color: #c69500; }
+.btn-danger    { background-color: #c0392b; color: #fff; }
+.btn-danger:hover { background-color: #a93226; }
+.btn-link      { background: none; color: #2c5f8a; padding: 8px 4px; }
+.btn-link:hover { text-decoration: underline; }
+.btn-sm        { padding: 4px 10px; font-size: 0.82rem; }
+
+/* ── Sección filtros ── */
+.filtros-section {
+    background: #fff;
+    border: 1px solid #dde;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.filtros-section h2 { font-size: 1rem; color: #555; margin-bottom: 12px; }
+
+.filtros-form .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filtros-form .form-group { flex: 1 1 180px; min-width: 150px; }
+
+.filtros-acciones {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Tabla ── */
+.tabla-section {
+    background: #fff;
+    border: 1px solid #dde;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+.tabla { width: 100%; border-collapse: collapse; }
+
+.tabla thead tr { background-color: #2c5f8a; color: #fff; }
+
+.tabla th, .tabla td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tabla tbody tr:hover { background-color: #f8f9fa; }
+
+.acciones { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+/* ── Badges ── */
+.badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.badge-activa      { background: #d4edda; color: #155724; }
+.badge-pausada     { background: #fff3cd; color: #856404; }
+.badge-finalizada  { background: #e2e3e5; color: #383d41; }
+.badge-borrador    { background: #cce5ff; color: #004085; }
+.badge-activo      { background: #d4edda; color: #155724; }
+.badge-finalizado  { background: #e2e3e5; color: #383d41; }
+.badge-rescindido  { background: #f8d7da; color: #721c24; }
+
+/* ── Formulario ── */
+.formulario-card {
+    background: #fff;
+    border: 1px solid #dde;
+    border-radius: 6px;
+    padding: 28px 32px;
+    max-width: 760px;
+}
+
+.form-group { margin-bottom: 18px; }
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.required { color: #c0392b; }
+
+.form-control {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.93rem;
+    transition: border-color 0.15s;
+    background: #fff;
+    color: #222;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #2c5f8a;
+    box-shadow: 0 0 0 2px rgba(44,95,138,.15);
+}
+
+.form-control.readonly {
+    background: #f4f6f9;
+    color: #666;
+    cursor: not-allowed;
+}
+
+textarea.form-control { resize: vertical; min-height: 90px; }
+
+.form-hint { display: block; font-size: 0.8rem; color: #888; margin-top: 3px; }
+
+.form-acciones {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+/* ── Error inline (compatibilidad original) ── */
+.error { color: red; }
+
+/* ── Sin resultados ── */
+.sin-resultados { padding: 40px; text-align: center; color: #777; font-style: italic; }
+
+/* ── Tabla botones (compatibilidad main.css original) ── */
+table.botones input {
+    background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    cursor: pointer;
+    color: #666;
+    font-family: arial;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 6px 24px;
+}
+
+.resultados th { background-color: #4CAF50; color: white; }
+.resultados tr:nth-child(even) { background-color: #f2f2f2; }
+
+/* ── Utilidades ── */
+.text-muted { color: #888; }
+.text-sm    { font-size: 0.82rem; }
+.page-footer { margin-top: 20px; padding-top: 12px; border-top: 1px solid #dde; }

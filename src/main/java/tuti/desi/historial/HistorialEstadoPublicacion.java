@@ -1,79 +1,70 @@
 package tuti.desi.historial;
 
-
-
-import tuti.desi.enums.*;
-import jakarta.persistence.*;
-//import jakarta.validation.*;
 import java.time.LocalDateTime;
 
-
+import jakarta.persistence.*;
+import tuti.desi.entidades.Publicacion;
+import tuti.desi.enums.EstadoPublicacion;
 
 @Entity
-public class HistorialEstadoPublicacion{
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private EstadoPublicacion estado;
-	private LocalDateTime fechaHora;
-	
-	
-	
-	// Constructores
-	
-	public HistorialEstadoPublicacion() {
-		
-	}
+public class HistorialEstadoPublicacion {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public HistorialEstadoPublicacion(EstadoPublicacion estado, LocalDateTime fechaHora) {
-		super();
-		this.estado = estado;
-		this.fechaHora = fechaHora;
-	}
+    @Enumerated(EnumType.STRING)
+    private EstadoPublicacion estadoAnterior;
 
-	
-	
-	// Getter
-	
-	public long getId() {
-		return id;
-	}
+    @Enumerated(EnumType.STRING)
+    private EstadoPublicacion estadoNuevo;
 
+    private LocalDateTime fechaHora;
 
-	public EstadoPublicacion getEstado() {
-		return estado;
-	}
+    @ManyToOne
+    @JoinColumn(name = "publicacion_id")
+    private Publicacion publicacion;
 
+    public HistorialEstadoPublicacion() {
+    }
 
-	public LocalDateTime getFechaHora() {
-		return fechaHora;
-	}
-	
-	
-	
-	
-	
-	// Setters
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public EstadoPublicacion getEstadoAnterior() {
+        return estadoAnterior;
+    }
 
-	public void setEstado(EstadoPublicacion estado) {
-		this.estado = estado;
-	}
+    public void setEstadoAnterior(EstadoPublicacion estadoAnterior) {
+        this.estadoAnterior = estadoAnterior;
+    }
 
+    public EstadoPublicacion getEstadoNuevo() {
+        return estadoNuevo;
+    }
 
-	public void setFechaHora(LocalDateTime fechaHora) {
-		this.fechaHora = fechaHora;
-	}
-	
-	
-	
-	
-	
+    public void setEstadoNuevo(EstadoPublicacion estadoNuevo) {
+        this.estadoNuevo = estadoNuevo;
+    }
+
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
+    }
+
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
+    }
+
+    public Publicacion getPublicacion() {
+        return publicacion;
+    }
+
+    public void setPublicacion(Publicacion publicacion) {
+        this.publicacion = publicacion;
+    }
 }
-

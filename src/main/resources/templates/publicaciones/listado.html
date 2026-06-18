@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Publicaciones</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <header class="page-header">
+        <h1>Gestión de Publicaciones</h1>
+        <a th:href="@{/publicaciones/nueva}" class="btn btn-primary">+ Nueva Publicación</a>
+    </header>
+
+    <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+    <div th:if="${mensajeError}" class="alert alert-error"   th:text="${mensajeError}"></div>
+
+    <!-- Filtros HU 2.4 -->
+    <section class="filtros-section">
+        <h2>Filtros</h2>
+        <form th:action="@{/publicaciones}" method="get" class="filtros-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Propiedad</label>
+                    <select name="propiedadId" class="form-control">
+                        <option value="">-- Todas --</option>
+                        <option th:each="p : ${propiedades}"
+                                th:value="${p.id}"
+                                th:text="${p.getDireccionCompleta()}"
+                                th:selected="${filtroPropiedadId != null and filtroPropiedadId == p.id}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ciudad</label>
+                    <input type="text" name="ciudad" class="form-control"
+                           th:value="${filtroCiudad}" placeholder="Filtrar por ciudad"/>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select name="estado" class="form-control">
+                        <option value="">-- Todos --</option>
+                        <option th:each="est : ${estados}"
+                                th:value="${est.name()}"
+                                th:text="${est.descripcion}"
+                                th:selected="${filtroEstado != null and filtroEstado == est}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Precio mínimo</label>
+                    <input type="number" name="precioMin" class="form-control"
+                           th:value="${filtroPrecioMin}" min="0" step="0.01" placeholder="0.00"/>
+                </div>
+                <div class="form-group">
+                    <label>Precio máximo</label>
+                    <input type="number" name="precioMax" class="form-control"
+                           th:value="${filtroPrecioMax}" min="0" step="0.01" placeholder="Sin límite"/>
+                </div>
+            </div>
+            <div class="filtros-acciones">
+                <button type="submit" class="btn btn-secondary">Buscar</button>
+                <a th:href="@{/publicaciones}" class="btn btn-link">Limpiar</a>
+            </div>
+        </form>
+    </section>
+
+    <!-- Tabla -->
+    <section class="tabla-section">
+        <div th:if="${#lists.isEmpty(publicaciones)}" class="sin-resultados">
+            No se encontraron publicaciones.
+        </div>
+        <table th:unless="${#lists.isEmpty(publicaciones)}" class="tabla">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Dirección</th>
+                    <th>Ciudad</th>
+                    <th>Precio Mensual</th>
+                    <th>Fecha Publicación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="pub : ${publicaciones}">
+                    <td th:text="${pub.id}"></td>
+                    <td th:text="${pub.propiedad?.direccion}"></td>
+                    <td th:text="${pub.propiedad?.ciudad}"></td>
+                    <td th:text="${'$' + pub.precioMensual}"></td>
+                    <td th:text="${pub.fechaPublicacion != null ? #temporals.format(pub.fechaPublicacion,'dd/MM/yyyy') : '-'}"></td>
+                    <td>
+                        <span th:text="${pub.estado.descripcion}"
+                              th:classappend="${pub.estado.name() == 'ACTIVA'}    ? ' badge badge-activa' :
+                                             (${pub.estado.name() == 'PAUSADA'}   ? ' badge badge-pausada' : ' badge badge-finalizada')">
+                        </span>
+                    </td>
+                    <td class="acciones">
+                        <a th:href="@{/publicaciones/editar/{id}(id=${pub.id})}"
+                           class="btn btn-sm btn-warning">Editar</a>
+
+                        <form th:if="${pub.estado.name() == 'ACTIVA'}"
+                              th:action="@{/publicaciones/eliminar/{id}(id=${pub.id})}"
+                              method="post" style="display:inline;"
+                              onsubmit="return confirm('¿Eliminar esta publicación?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                        <span th:unless="${pub.estado.name() == 'ACTIVA'}"
+                              class="text-muted text-sm">No eliminable</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="page-footer">
+        <a th:href="@{/}" class="btn btn-link">← Inicio</a>
+    </div>
+
+</div>
+</body>
+</html>
