@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tuti.desi.entidades.Contrato;
+import tuti.desi.entidades.Propiedad;
 import tuti.desi.enums.EstadoContrato;
 
 import java.time.LocalDate;
@@ -27,6 +28,8 @@ public interface contratoPersistencia extends JpaRepository<Contrato, Long> {
                                         @Param("fechaFin") LocalDate fechaFin);
 
     @Query("SELECT c FROM Contrato c WHERE c.propiedad.id = :propiedadId AND c.estado = :estado")
-    List<Contrato> findByPropiedadIdAndEstado(@Param("propiedadId") Long propiedadId,
-                                              @Param("estado") EstadoContrato estado);
+    List<Contrato> findByPropiedadIdAndEstado(@Param("propiedadId") Long propiedadId, @Param("estado") EstadoContrato estado);
+    
+	@Query("SELECT c FROM Contrato c")
+    List<Contrato> buscarTodasActivas();
 }
