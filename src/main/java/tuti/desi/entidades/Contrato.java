@@ -73,31 +73,111 @@ public class Contrato {
         this.historialEstados.add(registro);
     }
 
+    
     // Getters
-    public Long getId()                         { return this.id; }
-    public LocalDate getFechaInicio()           { return this.fechaInicio; }
-    public int getDuracionMeses()               { return this.duracionMeses; }
-    public BigDecimal getImporteMensual()       { return this.importeMensual; }
-    public int getDiaVencimientoMensual()       { return this.diaVencimientoMensual; }
-    public String getDescripcion()              { return this.descripcion; }
-    public EstadoContrato getEstado()           { return this.estado; }
-    public Propiedad getPropiedad()             { return propiedad; }
-    public Persona getInquilino()               { return inquilino; }
-    public List<Incidente> getIncidentes()      { return incidentes; }
-    public List<HistorialEstadoContrato> getHistorialEstados() { return historialEstados; }
-    public List<Factura> getFacturas()          { return facturas; }
+    
+	public long getId() {
+		return id;
+	}
 
-    // Setters
-    public void setId(long id)                              { this.id = id; }
-    public void setFechaInicio(LocalDate f)                 { this.fechaInicio = f; }
-    public void setDuracionMeses(int d)                     { this.duracionMeses = d; }
-    public void setImporteMensual(BigDecimal i)             { this.importeMensual = i; }
-    public void setDiaVencimientoMensual(int d)             { this.diaVencimientoMensual = d; }
-    public void setDescripcion(String d)                    { this.descripcion = d; }
-    public void setEstado(EstadoContrato e)                 { this.estado = e; }
-    public void setPropiedad(Propiedad p)                   { this.propiedad = p; }
-    public void setInquilino(Persona i)                     { this.inquilino = i; }
-    public void setIncidentes(List<Incidente> i)            { this.incidentes = i; }
-    public void setHistorialEstados(List<HistorialEstadoContrato> h) { this.historialEstados = h; }
-    public void setFacturas(List<Factura> f)                { this.facturas = f; }
+	public LocalDate getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public int getDuracionMeses() {
+		return duracionMeses;
+	}
+
+	public BigDecimal getImporteMensual() {
+		return importeMensual;
+	}
+
+	public int getDiaVencimientoMensual() {
+		return diaVencimientoMensual;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public EstadoContrato getEstado() {
+		return estado;
+	}
+
+	public Propiedad getPropiedad() {
+		return propiedad;
+	}
+
+	public Persona getInquilino() {
+		return inquilino;
+	}
+
+	public List<Incidente> getIncidentes() {
+		return incidentes;
+	}
+
+	public List<HistorialEstadoContrato> getHistorialEstados() {
+		return historialEstados;
+	}
+
+	public List<Factura> getFacturas() {
+		return facturas;
+	}
+	
+	
+	
+	
+	
+	// Setters
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setFechaInicio(LocalDate fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	public void setDuracionMeses(int duracionMeses) {
+		this.duracionMeses = duracionMeses;
+	}
+
+	public void setImporteMensual(BigDecimal importeMensual) {
+		this.importeMensual = importeMensual;
+	}
+
+	public void setDiaVencimientoMensual(int diaVencimientoMensual) {
+		this.diaVencimientoMensual = diaVencimientoMensual;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public void setEstado(EstadoContrato estado) {
+		this.estado = estado;
+	}
+
+	public void setPropiedad(Propiedad propiedad) {
+		this.propiedad = propiedad;
+	}
+
+	public void setInquilino(Persona inquilino) {
+		this.inquilino = inquilino;
+	}
+
+	public void setIncidentes(List<Incidente> incidentes) {
+		this.incidentes = incidentes;
+	}
+
+	public void setHistorialEstados(List<HistorialEstadoContrato> historialEstados) {
+		this.historialEstados = historialEstados;
+	}
+
+	public void setFacturas(List<Factura> facturas) {
+		this.facturas = facturas;
+	}
+
+    
+    
 }
