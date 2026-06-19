@@ -47,7 +47,13 @@
 		
 		
 		
-		
+		<div th:if="${errorGlobal}" 
+		     style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+		    
+		    <strong>¡Atención!</strong> 
+		    <span th:text="${errorGlobal}"></span>
+		    
+		</div>
 		
 		
 		<div class="formulario-edicion" th:if="${modo == 'modificar'}"> 	<!-- Se muestra unicamente cuando modo == modificar, eso lo devuelven los botones -->

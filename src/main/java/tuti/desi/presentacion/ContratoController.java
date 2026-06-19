@@ -167,7 +167,7 @@ public class ContratoController {
 
 		    try {	// intenta 
 		        
-		    	System.out.println("✅ 3. Validación exitosa. Viajando hacia la capa de Servicios...");
+		    	System.out.println("Validación exitosa. Viajando hacia la capa de Servicios...");
 		        miServicioContrato.modificarContrato(contrato); // Guardar los cambios, si puede
 		        
 		        
@@ -176,7 +176,7 @@ public class ContratoController {
 		    } catch (IllegalArgumentException errorDeNegocio) {
 		        
 		        model.addAttribute("errorGlobal", errorDeNegocio.getMessage());
-		        System.out.println("❌ 4. El servicio rechazó los datos: " + errorDeNegocio.getMessage());
+		        System.out.println("El servicio rechazó los datos: " + errorDeNegocio.getMessage());
 		        
 		        // Recargamos todos los combo boxs
 		        model.addAttribute("listaContrato", contratoRepo.buscarTodasActivas());
@@ -186,5 +186,31 @@ public class ContratoController {
 		        
 		        return "modificarContrato";
 		    }
-	 }	    
+	 }
+	 
+	 
+	 
+	 @PostMapping("/prepararBorrar")	
+	 public String prepararBorrar(@RequestParam("id") Long id, Model model, Contrato contrato) {	
+	     
+		 try {	
+		        
+		    	System.out.println("Validación exitosa. Viajando hacia la capa de Servicios...");
+		        miServicioContrato.modificarContrato(contrato); // Guardar los cambios, si puede
+		        
+		        
+		        return "redirect:/contratos/modificar"; // Volvemos a cargar la pantalla limpia
+
+		    } catch (IllegalArgumentException errorDeNegocio) {
+		    	
+		    }
+	     
+	     return "modificarContrato";
+	 }
+	 
+	 
+	 
+	 
+	 
+	 
 }
