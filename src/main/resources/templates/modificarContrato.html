@@ -35,7 +35,7 @@
 				<!-- Botones para seleccionar que se quiere hacer -->
 				<div class="btn-submite" style="margin-top: 25px; display: flex; gap: 10px;">
 					<button type="submit" th:formaction="@{/contratos/prepararModificar}">Modificar</button>
-					<button type="submit" th:formaction="@{/contratos/borrar}" style="background-color: #dc3545;">Borrar</button>
+					<button type="submit" th:formaction="@{/contratos/prepararBorrar}" style="background-color: #dc3545;">Borrar</button>
 					<button type="submit" th:formaction="@{/contratos/listar}" formmethod="GET">Listar Todos</button>
 				</div>
 				
@@ -171,6 +171,14 @@
 	                <button type="submit">Guardar Cambios</button>
 	            </div>
 	        </form>
+			
+			
+			
+		</div>
+		
+		
+		<div class="formulario-borrar" th:if="${modo == 'borrar'}"> 
+			
 			
 			
 			

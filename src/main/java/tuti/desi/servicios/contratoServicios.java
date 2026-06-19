@@ -1,4 +1,3 @@
-
 package tuti.desi.servicios;
  
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,9 @@ public class contratoServicios {
     @Autowired
     private contratoPersistencia contratoRepo;	// Creamos el obj que nos ayude con la persistencia y coneccion con la bd
     @Autowired
-    private personaPersistencia personaRepo;
+    private PersonaPersistencia personaRepo;
     @Autowired
-    private propiedadPersistencia propiedadRepo;
+    private PropiedadPersistencia propiedadRepo;
 
     
     

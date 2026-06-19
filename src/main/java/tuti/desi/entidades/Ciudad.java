@@ -46,7 +46,7 @@ public class Ciudad {
 		this.nombre = nombre;
 	}
 	
-	public void serProvincia (Provincia provincia) {
+	public void setProvincia (Provincia provincia) {
 		this.provincia = provincia;
 	}
 	

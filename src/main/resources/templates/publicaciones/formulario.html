@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${modoEdicion} ? 'Editar Publicación' : 'Nueva Publicación'">Publicación</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <header class="page-header">
+        <h1 th:text="${modoEdicion} ? 'Editar Publicación #' + ${publicacion.id} : 'Nueva Publicación'"></h1>
+    </header>
+
+    <div th:if="${mensajeError}" class="alert alert-error" th:text="${mensajeError}"></div>
+
+    <form th:action="${modoEdicion} ? @{/publicaciones/editar/{id}(id=${publicacion.id})} : @{/publicaciones/nueva}"
+          method="post"
+          th:object="${publicacion}"
+          class="formulario-card">
+
+        <!-- ID: solo lectura en edición -->
+        <div th:if="${modoEdicion}" class="form-group">
+            <label>ID de Publicación</label>
+            <input type="text" class="form-control readonly" th:value="${publicacion.id}" readonly/>
+            <small class="form-hint">El identificador no puede modificarse.</small>
+        </div>
+
+        <!-- Propiedad -->
+        <div class="form-group">
+            <label>Propiedad <span class="required">*</span></label>
+
+            <!-- Alta: combo de propiedades DISPONIBLES -->
+            <div th:if="${!modoEdicion}">
+                <select name="propiedadId" class="form-control" required>
+                    <option value="">-- Seleccione una propiedad --</option>
+                    <option th:each="p : ${propiedades}"
+                            th:value="${p.id}"
+                            th:text="${p.getDireccionCompleta() + ' (' + p.tipo.descripcion + ')'}"
+                            th:selected="${publicacion.propiedad != null and publicacion.propiedad.id == p.id}">
+                    </option>
+                </select>
+                <small class="form-hint">Solo se muestran propiedades en estado DISPONIBLE.</small>
+            </div>
+
+            <!-- Edición: solo lectura (HU 2.3) -->
+            <div th:if="${modoEdicion}">
+                <input type="text" class="form-control readonly"
+                       th:value="${publicacion.propiedad != null ? publicacion.propiedad.getDireccionCompleta() : '-'}"
+                       readonly/>
+                <small class="form-hint">La propiedad no puede modificarse una vez creada la publicación.</small>
+            </div>
+        </div>
+
+        <!-- Precio mensual -->
+        <div class="form-group">
+            <label>Precio mensual ($) <span class="required">*</span></label>
+            <input type="number" name="precioMensual" class="form-control"
+                   th:value="${publicacion.precioMensual}"
+                   min="0.01" step="0.01" required placeholder="Ej: 150000.00"/>
+            <small class="form-hint">Debe ser un número positivo.</small>
+        </div>
+
+        <!-- Fecha de publicación -->
+        <div class="form-group">
+            <label>Fecha de publicación <span class="required">*</span></label>
+            <input type="date" name="fechaPublicacion" class="form-control"
+                   th:value="${publicacion.fechaPublicacion}" required/>
+        </div>
+
+        <!-- Estado -->
+        <div class="form-group">
+            <label>Estado <span class="required">*</span></label>
+            <select name="estado" class="form-control" required>
+                <option th:each="est : ${estados}"
+                        th:value="${est.name()}"
+                        th:text="${est.descripcion}"
+                        th:selected="${publicacion.estado != null and publicacion.estado == est}">
+                </option>
+            </select>
+            <small class="form-hint"
+                   th:text="${modoEdicion}
+                       ? 'Las condiciones de alquiler no pueden modificarse en una publicación FINALIZADA.'
+                       : 'Estado por defecto: Activa.'">
+            </small>
+        </div>
+
+        <!-- Condiciones de alquiler -->
+        <div class="form-group">
+            <label>Condiciones de alquiler <span class="required">*</span></label>
+            <textarea name="condiciones" class="form-control" rows="4" required
+                      placeholder="Ej: Depósito 2 meses. Garantía propietaria. No se aceptan mascotas."
+                      th:text="${publicacion.condiciones}"></textarea>
+            <small class="form-hint">Incluya depósito, garantía, mascotas y otras condiciones.</small>
+        </div>
+
+        <!-- Descripción de la propiedad -->
+        <div class="form-group">
+            <label>Descripción de la propiedad <span class="required">*</span></label>
+            <textarea name="descripcion" class="form-control" rows="5" required
+                      placeholder="Describa las características de la propiedad para la publicación..."
+                      th:text="${publicacion.descripcion}"></textarea>
+        </div>
+
+        <div class="form-acciones">
+            <button type="submit" class="btn btn-primary"
+                    th:text="${modoEdicion} ? 'Guardar cambios' : 'Crear publicación'">
+            </button>
+            <a th:href="@{/publicaciones}" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+    </form>
+
+    <div class="page-footer">
+        <a th:href="@{/}" class="btn btn-link">← Inicio</a>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fechaInput = document.querySelector('[name="fechaPublicacion"]');
+        if (fechaInput && !fechaInput.value) {
+            fechaInput.value = new Date().toISOString().split('T')[0];
+        }
+    });
+</script>
+</body>
+</html>
