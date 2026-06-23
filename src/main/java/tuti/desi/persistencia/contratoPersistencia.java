@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface contratoPersistencia extends JpaRepository<Contrato, Long> {
+public interface ContratoPersistencia extends JpaRepository<Contrato, Long> {
 
     List<Contrato> findByEstado(EstadoContrato estado);
 

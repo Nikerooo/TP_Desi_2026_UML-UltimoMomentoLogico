@@ -20,7 +20,7 @@ import tuti.desi.enums.EstadoContrato;
 import tuti.desi.persistencia.*;
 import tuti.desi.persistencia.PersonaPersistencia;
 import tuti.desi.persistencia.PropiedadPersistencia;
-import tuti.desi.servicios.contratoServicios;
+import tuti.desi.servicios.ContratoServicios;
 
 import java.util.List;
 
@@ -29,9 +29,9 @@ import java.util.List;
 public class ContratoController {
 		
 	@Autowired
-	private contratoServicios miServicioContrato;
+	private ContratoServicios miServicioContrato;
 	@Autowired
-	private contratoPersistencia contratoRepo;
+	private ContratoPersistencia contratoRepo;
 	@Autowired
 	private PropiedadPersistencia propiedadRepo; 	
 	@Autowired

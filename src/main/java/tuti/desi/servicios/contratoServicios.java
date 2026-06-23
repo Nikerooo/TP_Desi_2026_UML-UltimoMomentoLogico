@@ -13,10 +13,10 @@ import tuti.desi.entidades.*;
 import java.util.List;
  
 @Service
-public class contratoServicios {
+public class ContratoServicios {
  
     @Autowired
-    private contratoPersistencia contratoRepo;	// Creamos el obj que nos ayude con la persistencia y coneccion con la bd
+    private ContratoPersistencia contratoRepo;	// Creamos el obj que nos ayude con la persistencia y coneccion con la bd
     @Autowired
     private PersonaPersistencia personaRepo;
     @Autowired
