@@ -201,7 +201,7 @@ public class ContratoController {
 	     model.addAttribute("contrato", contratoEncontrado);
 	     model.addAttribute("listaContrato", contratoRepo.findByEstadoNot(EstadoContrato.BORRADO)); 
 	     
-	     // 🚨 Activamos el "modo borrar" para que aparezca el botón gigante en el HTML
+
 	     model.addAttribute("modo", "borrar"); 
 	     
 	     return "modificarContrato";
@@ -212,18 +212,26 @@ public class ContratoController {
 	 public String Borrar(@RequestParam("id") Long id, Model model, Contrato contrato) {	
 	     
 		 try {	
-		        
-		    	System.out.println("Validación exitosa. Viajando hacia la capa de Servicios...");
-		    	miServicioContrato.borradoLogicoContrato(contrato);
-		        
-		        
-		        return "redirect:/contratos/modificar"; // Volvemos a cargar la pantalla limpia
+			 
+	            System.out.println("Ejecutando borrado lógico del contrato ID: " + id);
+	            
+	            miServicioContrato.borradoLogicoContrato(id); 
+	            
+	            return "redirect:/contratos/modificar"; 
 
-		    } catch (IllegalArgumentException errorDeNegocio) {
-		    	
-		    }
+	        } catch (IllegalArgumentException errorDeNegocio) {
+	            
+	            model.addAttribute("errorGlobal", errorDeNegocio.getMessage());
+	            
+	            model.addAttribute("contrato", new Contrato());
+	            
+	            model.addAttribute("listaContrato", contratoRepo.findByEstadoNot(EstadoContrato.BORRADO));
+	            model.addAttribute("listaPropiedades", propiedadRepo.buscarTodasActivas()); 
+	            model.addAttribute("listaInquilinos", personaRepo.buscarTodasPersonas());
+	            
+	            return "modificarContrato";
+	        }
 	     
-	     return "modificarContrato";
 	 }
 	 
 	 

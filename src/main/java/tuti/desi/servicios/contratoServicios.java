@@ -183,27 +183,23 @@ public class ContratoServicios {
     }
     
     
-    public Contrato borradoLogicoContrato(Contrato contratoElim) {
-    	
-    	Contrato contratoOriginal = contratoRepo.findById(contratoElim.getId())	// Buscamos el contrato que coincida con el ID del contrato que el usuario quiso modificar
-                .orElseThrow(() -> new IllegalArgumentException("El contrato no existe."));	// Si no se encuentra lanza un mensaje de error. 
+    @Transactional
+    public Contrato borradoLogicoContrato(Long idContrato) {
+        
+        
+        Contrato contratoOriginal = contratoRepo.findById(idContrato)	// Buscamos el contrato que concuerde con el que el usuario quiere cambiar
+                .orElseThrow(() -> new IllegalArgumentException("El contrato no existe en la base de datos.")); 
 
-    	
-    	if(contratoOriginal.getEstado() != EstadoContrato.BORRADO) {
-    		
-    		if(contratoOriginal.getEstado() == EstadoContrato.BORRADOR){
-        		
-        		contratoOriginal.setEstado(EstadoContrato.BORRADO);
-        		
-        	} else {
-        		throw new IllegalArgumentException("El estado del contrato debe ser BORRADOR para poder eliminar");
-        	}
-    		
-    	} else {
-
-    	}
-    	
-    	return contratoRepo.save(contratoOriginal);
+       
+        if (contratoOriginal.getEstado() != EstadoContrato.BORRADOR) {
+            throw new IllegalArgumentException("Operación denegada: El estado del contrato debe ser BORRADOR para poder eliminarlo.");
+        }
+        
+        
+        contratoOriginal.cambiarEstado(EstadoContrato.BORRADO); 
+        
+        
+        return contratoRepo.save(contratoOriginal);
     }
     
     
