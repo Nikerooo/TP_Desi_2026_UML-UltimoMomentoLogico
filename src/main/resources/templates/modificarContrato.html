@@ -177,11 +177,28 @@
 		</div>
 		
 		
-		<div class="formulario-borrar" th:if="${modo == 'borrar'}"> 
-			
-			
-			
-			
+		<div class="formulario-borrar" th:if="${modo == 'borrar'}" 
+		     style="text-align: center; "> 
+					
+		    <h2 style="color: #dc3545; ">ATENCIÓN!!!</h2>
+		    
+		    <p >¿Estás completamente seguro de que deseas eliminar el contrato número <strong th:text="${contrato.id}"></strong>?</p> 
+		    <p >Inquilino asociado: <strong th:text="${contrato.inquilino.nombre} + ' ' + ${contrato.inquilino.apellido}"></strong></p>
+
+		    <form method="POST" th:action="@{/contratos/Borrar}">
+		        
+		        <input type="hidden" name="id" th:value="${contrato.id}" />
+
+				
+		        <div style="margin-top: 25px;">
+					
+		            <button type="submit" style="background-color: #dc3545; color: white;"> SÍ, CONFIRMAR BORRADO</button>
+
+		            <a th:href="@{/contratos/modificar}" style="display: inline-block; background-color: #6c757d; color: white;">Cancelar</a>
+		        </div>
+				
+				
+		    </form>
 		</div>
 
 	</body>

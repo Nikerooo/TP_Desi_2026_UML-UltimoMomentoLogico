@@ -19,7 +19,11 @@ public interface contratoPersistencia extends JpaRepository<Contrato, Long> {
     List<Contrato> findByPropiedadId(Long propiedadId);
 
     List<Contrato> findByInquilinoId(Long inquilinoId);
+    
+    List<Contrato> findByEstadoNot(EstadoContrato estado);
 
+    
+    
     @Query("SELECT c FROM Contrato c WHERE c.propiedad.id = :propiedadId AND c.estado = 'ACTIVO' " +
            "AND c.fechaInicio < :fechaFin " +
            "AND FUNCTION('ADDDATE', c.fechaInicio, c.duracionMeses * 30) > :fechaInicio")
@@ -27,8 +31,12 @@ public interface contratoPersistencia extends JpaRepository<Contrato, Long> {
                                         @Param("fechaInicio") LocalDate fechaInicio,
                                         @Param("fechaFin") LocalDate fechaFin);
 
+    
+    
     @Query("SELECT c FROM Contrato c WHERE c.propiedad.id = :propiedadId AND c.estado = :estado")
     List<Contrato> findByPropiedadIdAndEstado(@Param("propiedadId") Long propiedadId, @Param("estado") EstadoContrato estado);
+    
+
     
 	@Query("SELECT c FROM Contrato c")
     List<Contrato> buscarTodasActivas();
