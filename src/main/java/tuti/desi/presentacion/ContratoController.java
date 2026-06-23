@@ -20,7 +20,7 @@ import tuti.desi.enums.EstadoContrato;
 import tuti.desi.persistencia.*;
 import tuti.desi.persistencia.PersonaPersistencia;
 import tuti.desi.persistencia.PropiedadPersistencia;
-import tuti.desi.servicios.contratoServicios;
+import tuti.desi.servicios.ContratoServicios;
 
 import java.util.List;
 
@@ -29,9 +29,9 @@ import java.util.List;
 public class ContratoController {
 		
 	@Autowired
-	private contratoServicios miServicioContrato;
+	private ContratoServicios miServicioContrato;
 	@Autowired
-	private contratoPersistencia contratoRepo;
+	private ContratoPersistencia contratoRepo;
 	@Autowired
 	private PropiedadPersistencia propiedadRepo; 	
 	@Autowired
@@ -109,7 +109,7 @@ public class ContratoController {
 	 public String prepararContratos(Model model) {
 	    	
 		Contrato contrato = new Contrato();
-		List<Contrato> listaContrato = contratoRepo.buscarTodasActivas();
+		List<Contrato> listaContrato = contratoRepo.findByEstadoNot(EstadoContrato.BORRADO);
 	    	
 	    model.addAttribute("contrato", contrato);
 		model.addAttribute("listaContrato", listaContrato); 
@@ -191,14 +191,30 @@ public class ContratoController {
 	 }
 	 
 	 
-	 
 	 @PostMapping("/prepararBorrar")	
-	 public String prepararBorrar(@RequestParam("id") Long id, Model model, Contrato contrato) {	
+	 public String prepararBorrar(@RequestParam("id") Long id, Model model) {	
+	      
+	     // Buscamos el contrato para poder mostrar sus datos en la pantalla de confirmación
+	     Contrato contratoEncontrado = contratoRepo.findById(id)
+	             .orElseThrow(() -> new IllegalArgumentException("Contrato no encontrado")); 	
+	     
+	     model.addAttribute("contrato", contratoEncontrado);
+	     model.addAttribute("listaContrato", contratoRepo.findByEstadoNot(EstadoContrato.BORRADO)); 
+	     
+	     // 🚨 Activamos el "modo borrar" para que aparezca el botón gigante en el HTML
+	     model.addAttribute("modo", "borrar"); 
+	     
+	     return "modificarContrato";
+	 }
+	 
+	 
+	 @PostMapping("/Borrar")	
+	 public String Borrar(@RequestParam("id") Long id, Model model, Contrato contrato) {	
 	     
 		 try {	
 		        
 		    	System.out.println("Validación exitosa. Viajando hacia la capa de Servicios...");
-		        miServicioContrato.modificarContrato(contrato); // Guardar los cambios, si puede
+		    	miServicioContrato.borradoLogicoContrato(contrato);
 		        
 		        
 		        return "redirect:/contratos/modificar"; // Volvemos a cargar la pantalla limpia
