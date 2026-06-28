@@ -1,5 +1,10 @@
 package tuti.desi.entidades;
 
+/**
+ * @author NicolasMendez - 44859710
+ */
+
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -62,7 +67,8 @@ public class Contrato {
 
     public Contrato() {}
 
-    // ── Método de negocio: cambia estado y registra historial ──────────────
+
+
     public void cambiarEstado(EstadoContrato nuevoEstado) {
         this.estado = nuevoEstado;
 
