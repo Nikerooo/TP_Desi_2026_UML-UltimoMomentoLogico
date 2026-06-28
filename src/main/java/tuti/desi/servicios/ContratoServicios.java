@@ -49,6 +49,10 @@ public class ContratoServicios {
         if (propiedadExistente.isEliminada() != false) { 
             throw new IllegalArgumentException("La propiedad seleccionada no se encuentra disponible actualmente.");
         }
+        
+        
+        contrato.cambiarEstado(EstadoContrato.BORRADOR); // registra en historial
+        propiedadExistente.setEstadoDisp(EstadoDisponibilidad.ALQUILADA);	// Cambiamos el estado de la propiedad
 
         // Se ve si la propiedad ya tiene un contracto activo. Si se encuentra uno, se guarda en la lista 
         List<Contrato> contratosActivos = contratoRepo.findByPropiedadIdAndEstado(idPropiedad, EstadoContrato.ACTIVO);
