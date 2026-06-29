@@ -3,8 +3,12 @@ package tuti.desi.entidades;
 import jakarta.persistence.*;
 import tuti.desi.enums.EstadoFactura;
 import tuti.desi.enums.MedioPago;
+import tuti.desi.historial.HistorialEstadoFactura;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Factura {
@@ -33,6 +37,9 @@ public class Factura {
     @ManyToOne
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
+    
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HistorialEstadoFactura> historialEstados = new ArrayList<>();
 
     public Factura() {}
 
