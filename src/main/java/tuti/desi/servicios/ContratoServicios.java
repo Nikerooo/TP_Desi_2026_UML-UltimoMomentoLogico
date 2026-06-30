@@ -1,178 +1,244 @@
 package tuti.desi.servicios;
+ 
+/**
+ * @author NicolasMendez - 44859710
+ */
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import tuti.desi.entidades.Contrato;
-import tuti.desi.entidades.Persona;
-import tuti.desi.entidades.Propiedad;
 import tuti.desi.enums.EstadoContrato;
 import tuti.desi.enums.EstadoDisponibilidad;
-import tuti.desi.persistencia.contratoPersistencia;
-import tuti.desi.persistencia.PersonaPersistencia;
-import tuti.desi.persistencia.PropiedadPersistencia;
+import tuti.desi.persistencia.*;
+import tuti.desi.entidades.*; 
 
 import java.util.List;
-
+ 
 @Service
-@Transactional
 public class ContratoServicios {
+ 
+    @Autowired
+    private ContratoPersistencia contratoRepo;	// Creamos el obj que nos ayude con la persistencia y coneccion con la bd
+    @Autowired
+    private PersonaPersistencia personaRepo;
+    @Autowired
+    private PropiedadPersistencia propiedadRepo;
 
-    @Autowired private contratoPersistencia contratoRepo;
-    @Autowired private PersonaPersistencia  personaRepo;
-    @Autowired private PropiedadPersistencia propiedadRepo;
-
-    // ── HU 3.1: Alta ──────────────────────────────────────────────────────────
-
+    
+    
+    
     public Contrato crear(Contrato contrato) {
-        Long idPropiedad = contrato.getPropiedad().getId();
+    	
+    	// Declaramos dos variables, que van a tener los IDs de la propiedad e inquilinos que necesitamos
+    	Long idPropiedad = contrato.getPropiedad().getId();
         Long idInquilino = contrato.getInquilino().getId();
 
-        Propiedad propiedad = propiedadRepo.findById(idPropiedad)
-            .orElseThrow(() -> new IllegalArgumentException("La propiedad seleccionada no existe."));
-        Persona inquilino = personaRepo.findById(idInquilino)
-            .orElseThrow(() -> new IllegalArgumentException("El inquilino seleccionado no existe."));
+        // A su vez, se cargan las propiedades e inquilinos con los ID anterioremnte obtenidos. Se buscan en la BD
+        Propiedad propiedadExistente = propiedadRepo.findById(idPropiedad).orElse(null);
+        Persona inquilinoExistente = personaRepo.findById(idInquilino).orElse(null);
 
-        if (propiedad.isEliminada()) {
-            throw new IllegalArgumentException("No se puede crear un contrato para una propiedad eliminada.");
+        // Si la propiedad o inquilinos no existen tira error
+        if (propiedadExistente == null || inquilinoExistente == null) {
+            throw new IllegalArgumentException("La propiedad o el inquilino no existen en la BD.");
         }
-        if (inquilino.isEliminado()) {
-            throw new IllegalArgumentException("No se puede crear un contrato para un inquilino eliminado.");
+    	
+        // Si la propiedad fue eliminada tira error
+        if (propiedadExistente.isEliminada() != false) { 
+            throw new IllegalArgumentException("La propiedad seleccionada no se encuentra disponible actualmente.");
         }
+        
+        
+        contrato.cambiarEstado(EstadoContrato.BORRADOR); // registra en historial
+        propiedadExistente.setEstadoDisp(EstadoDisponibilidad.ALQUILADA);	// Cambiamos el estado de la propiedad
 
-        contrato.setPropiedad(propiedad);
-        contrato.setInquilino(inquilino);
-        contrato.cambiarEstado(EstadoContrato.BORRADOR);
-        return contratoRepo.save(contrato);
+        // Se ve si la propiedad ya tiene un contracto activo. Si se encuentra uno, se guarda en la lista 
+        List<Contrato> contratosActivos = contratoRepo.findByPropiedadIdAndEstado(idPropiedad, EstadoContrato.ACTIVO);
+        if (!contratosActivos.isEmpty()) {	// Si la lista no esta vacia, devuelve un error
+            throw new IllegalArgumentException("Esta propiedad ya posee un contrato ACTIVO vigente.");
+        }
+        
+        
+        contrato.cambiarEstado(EstadoContrato.BORRADOR); // registra en historial
+        propiedadExistente.setEstadoDisp(EstadoDisponibilidad.ALQUILADA);	// Cambiamos el estado de la propiedad
+
+        return contratoRepo.save(contrato);	// Mediante el obj de persistencia, se hace el SAVE en la BD del obj Contrato
     }
+ 
 
-    // ── HU 3.2: Eliminación lógica (solo BORRADOR) ────────────────────────────
+    
+    
+    
+    
+    
+    
+    @Transactional 	// Hace que la operacion sea atomica, todo o nada
+    public Contrato modificarContrato (Contrato contratoMod) {	// Se recibe el obj a modificar
+    	
+    	Contrato contratoOriginal = contratoRepo.findById(contratoMod.getId())	// Buscamos el contrato que coincida con el ID del contrato que el usuario quiso modificar
+                .orElseThrow(() -> new IllegalArgumentException("El contrato no existe."));	// Si no se encuentra lanza un mensaje de error. 
+    	
 
-    public void eliminar(Long id) {
-        Contrato contrato = obtenerOException(id);
-        if (contrato.getEstado() != EstadoContrato.BORRADOR) {
-            throw new IllegalStateException(
-                "Solo se pueden eliminar contratos en estado BORRADOR. " +
-                "Estado actual: " + contrato.getEstado().getDescripcion() + ".");
-        }
-        // Eliminación lógica: marcamos con estado RESCINDIDO NO, guardamos flag eliminado
-        // El enunciado pide eliminación lógica sin afectar estado de la propiedad
-        contrato.setEstado(EstadoContrato.BORRADOR); // se mantiene para no tocar propiedad
-        contratoRepo.delete(contrato); // eliminación física permitida solo en BORRADOR
-        // Para hacer lógica: agregar campo eliminado en Contrato y usar contratoRepo.save(contrato)
-    }
+    	Long idPropiedadOriginal = contratoOriginal.getPropiedad().getId();	// Obtenemos el ID de la propiedad asignada al contrato original
+        Long idPropiedadNueva = contratoMod.getPropiedad().getId();	// Obtenemos el ID de la propiedad al que el usuario quiere modificar
+        
+        Long idInquilinoOriginal = contratoOriginal.getInquilino().getId();	// Mismo procedimiento con el inquilino
+        Long idInquilinoNuevo = contratoMod.getInquilino().getId();
+        
 
-    // ── HU 3.3: Modificación ─────────────────────────────────────────────────
+        EstadoContrato estadoAnterior = contratoOriginal.getEstado();	// Buscamos el estado original del estado
+        EstadoContrato estadoNuevo = contratoMod.getEstado();	// Buscamos el nuevo estado que quiere establecer el usuario
+        Propiedad propiedadActual = contratoOriginal.getPropiedad();	// Buscamos a que propiedad esta ligado el "viejo" contrato
+    	
+        System.out.print("Se accede perfectamente a la capa de servicios");	// TEST
+        
+       
+        
+        if (!idPropiedadOriginal.equals(idPropiedadNueva)) {	// Si id de la propiedad seleccionada por el usuario no coincide con el ya establecido accede
+            
+            Propiedad propiedadNueva = propiedadRepo.findById(idPropiedadNueva).orElseThrow(() -> new IllegalArgumentException("La nueva propiedad no existe."));
+            //Buscamos y guardamos la nueva propiedad en base a su ID
+            
+            
+            if (contratoOriginal.getEstado() == EstadoContrato.ACTIVO) { //Si el contrato ya está activo, hay que hacer enroque de estados
+                
+                
+                if (propiedadNueva.isEliminada() || "ALQUILADA".equals(propiedadNueva.getEstadoDisp())) { // Validamos que la nueva propiedad cumpla los criterios de aceptación
+                    throw new IllegalArgumentException("No se puede transferir el contrato: la nueva propiedad no está disponible.");
+                }
+                
+                
+                List<Contrato> activosEnNueva = contratoRepo.findByPropiedadIdAndEstado(idPropiedadNueva, EstadoContrato.ACTIVO); // Buscamos si las propiedades tienen un contrato activo
+                if (!activosEnNueva.isEmpty()) {	// Si la lista no esta vacia es que esa propiedad ya tiene un contracto activo
+                    throw new IllegalArgumentException("La nueva propiedad elegida ya posee un contrato ACTIVO.");
+                }
 
-    public Contrato modificar(Long id, Contrato datosNuevos) {
-        Contrato existente = obtenerOException(id);
-        EstadoContrato estadoAnterior = existente.getEstado();
-        EstadoContrato estadoNuevo    = datosNuevos.getEstado();
+                
+                
+                Propiedad propiedadVieja = contratoOriginal.getPropiedad(); 
+                propiedadVieja.setEstadoDisp(EstadoDisponibilidad.DISPONIBLE); // Liberamos la propiedad vieja
+                propiedadRepo.save(propiedadVieja);
 
-        validarTransicionEstado(estadoAnterior, estadoNuevo);
-
-        if (estadoNuevo == EstadoContrato.ACTIVO) {
-            // No puede haber otro contrato activo para la misma propiedad
-            boolean hayOtroActivo = contratoRepo
-                .findByPropiedadIdAndEstado(existente.getPropiedad().getId(), EstadoContrato.ACTIVO)
-                .stream().anyMatch(c -> c.getId() != existente.getId());
-            if (hayOtroActivo) {
-                throw new IllegalStateException("Ya existe un contrato activo para esta propiedad.");
+                
+                propiedadNueva.setEstadoDisp(EstadoDisponibilidad.ALQUILADA); // Ocupamos la propiedad nueva
+                propiedadRepo.save(propiedadNueva);
             }
-            // Propiedad debe estar disponible
-            if (existente.getPropiedad().getEstadoDisp() != EstadoDisponibilidad.DISPONIBLE) {
-                throw new IllegalStateException(
-                    "La propiedad debe estar en estado DISPONIBLE para activar el contrato. " +
-                    "Estado actual: " + existente.getPropiedad().getEstadoDisp().getDescripcion() + ".");
+
+            
+            contratoOriginal.setPropiedad(propiedadNueva); // Vinculamos la nueva propiedad al contrato
+        }
+
+        
+
+
+        if (!idInquilinoOriginal.equals(idInquilinoNuevo)) {	// Si el id del inquilino nuevo es distinto al que se quiere modificar
+            Persona inquilinoNuevo = personaRepo.findById(idInquilinoNuevo)	// Se evalua que exista dicho inquilino
+                    .orElseThrow(() -> new IllegalArgumentException("El nuevo inquilino no existe."));	// De no ser asi, tira un error
+            
+            contratoOriginal.setInquilino(inquilinoNuevo);	// Se settea el nuevo inquilino
+        }
+
+
+
+
+        if (estadoAnterior != estadoNuevo) {	// Si los estados son distintos, se accede al IF para hacer las validaciones necesarias
+            
+            
+            if (estadoAnterior == EstadoContrato.FINALIZADO || estadoAnterior == EstadoContrato.RESCINDIDO) {
+                throw new IllegalArgumentException("Operación denegada: No se puede modificar ni reactivar un contrato que ya se encuentra Finalizado o Rescindido.");
+            }	// Si el estado del contrato original es finalizado o rescindido, no se le puede cambiar el estado
+
+            
+            if (estadoAnterior == EstadoContrato.BORRADOR && estadoNuevo != EstadoContrato.ACTIVO) {
+                throw new IllegalArgumentException("Transición inválida: Un contrato en estado BORRADOR solo puede cambiar a ACTIVO.");
+            }	// Si el estado anterior es borrador y el nuevo es distinto a activo, no se puede cambiar a otro que no sea activo
+
+            
+            if (estadoAnterior == EstadoContrato.ACTIVO && (estadoNuevo != EstadoContrato.FINALIZADO && estadoNuevo != EstadoContrato.RESCINDIDO)) {
+                throw new IllegalArgumentException("Transición inválida: Un contrato ACTIVO solo puede cambiar a FINALIZADO o RESCINDIDO.");
+            }	// Si el estado es activo, no se puede cambiar a otro que no sea finalizado o rescindido
+
+            
+            
+            
+            if (estadoNuevo == EstadoContrato.ACTIVO) {
+                
+                if (propiedadActual.isEliminada() || EstadoDisponibilidad.ALQUILADA.equals(propiedadActual.getEstadoDisp())) {	// Si la propiedadesta eliminada o alquilada tira error por que no esta disponible
+                    throw new IllegalArgumentException("No se puede activar el contrato: La propiedad asignada no está disponible.");
+                }
+                propiedadActual.setEstadoDisp(EstadoDisponibilidad.ALQUILADA); // Si no, se le asigna el nuevo estado de Alquilada
+            } 
+            
+            
+            
+            
+            
+            if (estadoNuevo == EstadoContrato.FINALIZADO || estadoNuevo == EstadoContrato.RESCINDIDO) {	// Si el nuevo estado es Finalizado o Rescindido
+            
+                propiedadActual.setEstadoDisp(EstadoDisponibilidad.DISPONIBLE);	// La propiedad vuelve a estar disponible
             }
-            // Al activar, la propiedad pasa a ALQUILADA
-            Propiedad p = existente.getPropiedad();
-            p.setEstadoDisp(EstadoDisponibilidad.ALQUILADA);
-            propiedadRepo.save(p);
+
+            propiedadRepo.save(propiedadActual);	// Se guarda el estado de la propiedad en la BD
+            contratoOriginal.cambiarEstado(estadoNuevo);	// Y se cambia el estado del contrato
         }
+        
+        
+        // Se le cambian los valores al obj 
+        contratoOriginal.setDuracionMeses(contratoMod.getDuracionMeses());
+        contratoOriginal.setImporteMensual(contratoMod.getImporteMensual());
+        contratoOriginal.setDiaVencimientoMensual(contratoMod.getDiaVencimientoMensual());
+        contratoOriginal.setDescripcion(contratoMod.getDescripcion());
 
-        if (estadoNuevo == EstadoContrato.FINALIZADO || estadoNuevo == EstadoContrato.RESCINDIDO) {
-            // Al finalizar/rescindir, la propiedad vuelve a DISPONIBLE
-            Propiedad p = existente.getPropiedad();
-            p.setEstadoDisp(EstadoDisponibilidad.DISPONIBLE);
-            propiedadRepo.save(p);
+
+        // Se guarda en la BD
+        return contratoRepo.save(contratoOriginal);
+        
+    }
+    
+    
+    @Transactional	// Atomico
+    public Contrato borradoLogicoContrato(Long idContrato) {
+        
+        
+        Contrato contratoOriginal = contratoRepo.findById(idContrato)	// Buscamos el contrato que concuerde con el que el usuario quiere cambiar
+                .orElseThrow(() -> new IllegalArgumentException("El contrato no existe en la base de datos.")); 
+
+       
+        if (contratoOriginal.getEstado() != EstadoContrato.BORRADOR) {	// Si el estado es distinto al borrador, no se puede hacer el borrado logico
+            throw new IllegalArgumentException("Operación denegada: El estado del contrato debe ser BORRADOR para poder eliminarlo.");
         }
-
-        existente.setFechaInicio(datosNuevos.getFechaInicio());
-        existente.setDuracionMeses(datosNuevos.getDuracionMeses());
-        existente.setImporteMensual(datosNuevos.getImporteMensual());
-        existente.setDiaVencimientoMensual(datosNuevos.getDiaVencimientoMensual());
-        existente.setDescripcion(datosNuevos.getDescripcion());
-
-        if (!estadoAnterior.equals(estadoNuevo)) {
-            existente.cambiarEstado(estadoNuevo);
-        }
-
-        return contratoRepo.save(existente);
+        
+        
+        contratoOriginal.cambiarEstado(EstadoContrato.BORRADO); // Se cambia el estado
+        
+        
+        return contratoRepo.save(contratoOriginal);	// Se guarda 
     }
+    
+    
+    
+    
+    
 
-    // ── HU 3.4: Listado ───────────────────────────────────────────────────────
-
-    public List<Contrato> listarTodos()                         { return contratoRepo.findAll(); }
-    public List<Contrato> listarPorEstado(EstadoContrato e)     { return contratoRepo.findByEstado(e); }
-    public Contrato buscarPorId(Long id)                        { return obtenerOException(id); }
-
-    // ── Transiciones de estado válidas ────────────────────────────────────────
-
-    private void validarTransicionEstado(EstadoContrato anterior, EstadoContrato nuevo) {
-        if (anterior == nuevo) return;
-        boolean valida = switch (anterior) {
-            case BORRADOR   -> nuevo == EstadoContrato.ACTIVO;
-            case ACTIVO     -> nuevo == EstadoContrato.FINALIZADO || nuevo == EstadoContrato.RESCINDIDO;
-            case FINALIZADO, RESCINDIDO -> false;
-        };
-        if (!valida) {
-            throw new IllegalStateException(
-                "Transición de estado no permitida: " + anterior.getDescripcion() +
-                " → " + nuevo.getDescripcion() + ".");
-        }
+    public Contrato buscarContratoPorId(Long id) {
+        return contratoRepo.findById(id).orElseThrow(() -> new RuntimeException("Contrato no encontrado"));
     }
+ 
+ 
 
-    private Contrato obtenerOException(Long id) {
-        return contratoRepo.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("No se encontró el contrato con id: " + id));
+    public List<Contrato> listarTodos() {
+        return contratoRepo.findAll();
     }
+ 
+ 
 
-    // ── Métodos del original (retrocompatibilidad con ContratoController) ─────
-
-    public Contrato activar(Long id) {
-        Contrato c = obtenerOException(id);
-        Contrato datos = new Contrato();
-        datos.setEstado(EstadoContrato.ACTIVO);
-        datos.setFechaInicio(c.getFechaInicio());
-        datos.setDuracionMeses(c.getDuracionMeses());
-        datos.setImporteMensual(c.getImporteMensual());
-        datos.setDiaVencimientoMensual(c.getDiaVencimientoMensual());
-        datos.setDescripcion(c.getDescripcion());
-        return modificar(id, datos);
+    public List<Contrato> listarPorEstado(EstadoContrato estado) {
+        return contratoRepo.findByEstado(estado);
     }
-
-    public Contrato finalizar(Long id) {
-        Contrato c = obtenerOException(id);
-        Contrato datos = new Contrato();
-        datos.setEstado(EstadoContrato.FINALIZADO);
-        datos.setFechaInicio(c.getFechaInicio());
-        datos.setDuracionMeses(c.getDuracionMeses());
-        datos.setImporteMensual(c.getImporteMensual());
-        datos.setDiaVencimientoMensual(c.getDiaVencimientoMensual());
-        datos.setDescripcion(c.getDescripcion());
-        return modificar(id, datos);
-    }
-
-    public Contrato rescindir(Long id) {
-        Contrato c = obtenerOException(id);
-        Contrato datos = new Contrato();
-        datos.setEstado(EstadoContrato.RESCINDIDO);
-        datos.setFechaInicio(c.getFechaInicio());
-        datos.setDuracionMeses(c.getDuracionMeses());
-        datos.setImporteMensual(c.getImporteMensual());
-        datos.setDiaVencimientoMensual(c.getDiaVencimientoMensual());
-        datos.setDescripcion(c.getDescripcion());
-        return modificar(id, datos);
-    }
+    
+    
+    
 }
+ 

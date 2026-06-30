@@ -3,8 +3,12 @@ package tuti.desi.entidades;
 import jakarta.persistence.*;
 import tuti.desi.enums.EstadoFactura;
 import tuti.desi.enums.MedioPago;
+import tuti.desi.historial.HistorialEstadoFactura;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Factura {
@@ -33,8 +37,11 @@ public class Factura {
     @ManyToOne
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
+    
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HistorialEstadoFactura> historialEstados = new ArrayList<>();
 
-    public Factura() {}
+	public Factura() {}
 
     public Long getId()                   { return this.id; }
     public LocalDate getFechaEmision()    { return this.fechaEmision; }
@@ -48,6 +55,8 @@ public class Factura {
     public BigDecimal getInteres()        { return this.interes; }
     public String getConceptoFacturado()  { return this.conceptoFacturado; }
     public Contrato getContrato()         { return this.contrato; }
+    public List<HistorialEstadoFactura> getHistorialEstados() { return historialEstados; }
+    
 
     public void setId(Long id)                      { this.id = id; }
     public void setFechaEmision(LocalDate f)        { this.fechaEmision = f; }
@@ -61,4 +70,5 @@ public class Factura {
     public void setInteres(BigDecimal i)            { this.interes = i; }
     public void setConceptoFacturado(String c)      { this.conceptoFacturado = c; }
     public void setContrato(Contrato c)             { this.contrato = c; }
+    public void setHistorialEstados(List<HistorialEstadoFactura> historialEstados) { this.historialEstados = historialEstados; }
 }

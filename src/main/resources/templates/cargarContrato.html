@@ -15,13 +15,12 @@
 	   <h1>Cargar contrato</h1>
 	</div>
 		
-	    <form th:object="${contrato}" method="POST" th:action="@{/contratos/guardar}" class="formulario"> 
-		<!-- th:object= Guarda toda la informacion en contrato ,  -->	
+        <form th:object="${contrato}" method="POST" th:action="@{/contratos/guardar}" class="formulario"> 
+		<!-- th:object= Guarda toda la informacion en contrato , th:action= , -->	
 			
 	        <div class="cargarPropiedad">
 	            <label>Elegir propiedad:</label>
 	            <select class="elegirPropiedad" th:field="*{propiedad.id}">
-	                <option value="0">Seleccione una propiedad</option>
 	                <option th:each="prop : ${listaPropiedades}"	
 	                        th:value="${prop.id}"
 	                        th:text="${prop.direccion}">
@@ -35,7 +34,6 @@
 	        <div class="cargarInquilino" style="margin-top: 15px;">
 	            <label>Elegir inquilino:</label>
 	            <select class="elegirInquilino" th:field="*{inquilino.id}">
-	                <option value="0">Seleccione un inquilino</option>
 					<option th:each="inq : ${listaInquilinos}"	
 						    th:value="${inq.id}"
 						    th:text="${inq.nombre}">
@@ -91,7 +89,7 @@
 				<input type="number" th:field="*{diaVencimientoMensual}">
 				
 				<p th:if="${#fields.hasErrors('diaVencimientoMensual')}" 
-					th:errors="*{duracionMeses}" 
+					th:errors="*{diaVencimientoMensual}" 
 					style="color: red; font-size: 0.9em; margin-top: 5px;">
 				</p>
 			</div>
@@ -116,7 +114,13 @@
 		    	<button type="submit">Guardar Contrato</button>
 			</div>
 			
+			<div class="volverMenu">
+				<a style="margin-top: 20px;"th:href="@{/}">Volver al Menú Principal</a>
+			</div>
 	    </form>
+		
+		
+
 
 	</body>
 </html>

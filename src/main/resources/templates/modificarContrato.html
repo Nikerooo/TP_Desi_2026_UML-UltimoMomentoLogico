@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/css/cargarContrato.css">
+  <title>Moficiar contrato - HogarYA</title>
+
+<!--   /**
+   * @author NicolasMendez - 44859710
+   */
+ -->
+</head>
+	<body>
+	
+		
+		
+		<div>
+		   <h1>Modificar / eliminar contratos</h1>
+		</div>
+		
+		
+		<div class="panel"> 
+
+		    <div class="caja-filtros">
+		        <form method="GET" th:action="@{/contratos/modificar}">	<!-- Este formulario va a tomar los datos enviados desde @{/contratos/modificar} -->
+		            
+		            <label style="margin-right: 15px; ">Propiedad:	
+		                <select name="idPropiedad" style="padding: 5px; margin-left: 5px;"> <!-- ComboBox que almacena las propiedades -->
+		                    <option value="">-- Todas --</option>	<!-- opcion 0, si no se elije manda null -->
+		                    <option th:each="prop : ${listaPropiedades}" 	
+		                            th:value="${prop.id}" 
+		                            th:text="${prop.direccion}"></option> <!-- Se recorre toda la lista y se toma el texto de la direccion y se retorna el id de la propiedad -->
+		                </select>
+		            </label>
+					
+					<!-- Mismo procedimiento que con propiedad -->
+		            <label style="margin-right: 15px; font-size: 14px;">Inquilino:
+		                <select name="idInquilino" style="padding: 5px; margin-left: 5px;">
+		                    <option value="">-- Todos --</option>
+		                    <option th:each="inq : ${listaInquilinos}" 
+		                            th:value="${inq.id}" 
+		                            th:text="${inq.nombre}"></option>
+		                </select>
+		            </label>
+
+					<!-- Mismo procedimiento, a diferencia que aca al tener una cantidad fija de estados, podemos settearlos de una -->
+		            <label style="margin-right: 15px; font-size: 14px;">Estado:
+		                <select name="estado" style="padding: 5px; margin-left: 5px;">
+		                    <option value="">-- Todos --</option>
+		                    <option value="BORRADOR">Borrador</option>
+		                    <option value="ACTIVO">Activo</option>
+		                    <option value="FINALIZADO">Finalizado</option>
+		                    <option value="RESCINDIDO">Rescindido</option>
+		                </select>
+		            </label>
+		            
+					<label style="margin-right: 15px;">Fecha Inicio:
+					    <input type="date" name="fechaInicio" style="padding: 5px; margin-left: 5px;">
+					</label>
+					
+		            <br>
+					<!-- Boton de busqueda -->
+		            <div style="margin-top: 15px;">
+		                <button type="submit" style="cursor: pointer; background-color: red;">Buscar</button>
+		            </div>
+					
+		        </form>
+		    </div>
+
+			<!-- Este Form va a plasmar la tabla de lo que estamos buscando -->
+		    <form method="POST" th:if="${not #lists.isEmpty(listaContrato)}">
+		        
+		        <table border="1" > <!-- Esta tabla va a almacenar la informacion de las propiedades -->
+		            <thead >
+		                <tr>	<!-- Aca definimos las columnas -->
+		                    <th style="padding: 10px; text-align: center;">Elegir</th>	<!-- Columna correspondiente a la radio button para marcar la propiedad a elegir -->
+		                    <th style="padding: 10px;">ID</th>	
+		                    <th style="padding: 10px;">Propiedad</th>
+		                    <th style="padding: 10px;">Inquilino</th>
+		                    <th style="padding: 10px;">Fecha Inicio</th>
+							<th style="padding: 10px;">Dia de vencimiento</th>
+							<th style="padding: 10px;">Importe Mensual</th>
+		                    <th style="padding: 10px;">Estado</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		                <tr th:each="c : ${listaContrato}" th:style="${c.estado.name() == 'BORRADOR'} ? 'background-color: #fff9e6;' : ''">
+							<!-- Busca en la lista de contratos. Cuando el estado sea == a borrador, le aplica el color amarillito tenue-->  
+							 
+							<!-- Boton para selecciona la propiedad a modificar -->
+		                    <td style="text-align: center; padding: 10px;">
+		                        <input type="radio" name="id" th:value="${c.id}" required style="cursor: pointer;" />
+		                    </td>
+		                    
+							<!-- Se van a cargar las filas con los datos sacados de la lista anteriormente recorrida -->
+		                    <td style="padding: 10px;" th:text="${c.id}"></td>
+		                    <td style="padding: 10px;" th:text="${c.propiedad.direccion}"></td>
+		                    <td style="padding: 10px;" th:text="${c.inquilino.nombre + ' ' + c.inquilino.apellido}"></td>
+		                    <td style="padding: 10px;" th:text="${c.fechaInicio}"></td>
+							<td style="padding: 10px;" th:text="${c.getDiaVencimientoMensual}"></td>
+							<td style="padding: 10px;" th:text="${c.getImporteMensual}"></td>
+		                    <td style="padding: 10px; font-weight: bold;" th:text="${c.estado}"></td>
+							
+		                </tr>
+		            </tbody>
+		        </table>
+
+				<!-- Clase para los botones -->
+		        <div class="btn-submite" style="margin-top: 25px; display: flex; gap: 15px; justify-content: flex-start;">
+		            	
+					<!-- Boton envia a prepararModificar el mensaje para que muestre la seccion de modificar  -->
+		            <button type="submit" th:formaction="@{/contratos/prepararModificar}" style="cursor: pointer;"> Modificar Selección</button>
+					<!-- Boton envia mensaje para la seccio nde borrado -->
+		            <button type="submit" th:formaction="@{/contratos/prepararBorrar}" style=" cursor: pointer; background-color: red;">Borrar Selección</button>
+		            
+		        </div>
+		    </form>
+		    
+			<!-- Si no se encuentran ningun filtro compatible, va a mostrar el mensaje de que no se encontraron registros -->
+		    <div th:if="${#lists.isEmpty(listaContrato)}" style="margin-top: 10px;" >
+		        No se encontraron contratos registrados con los filtros aplicados. Intenta con otra búsqueda.
+		    </div>
+
+		</div>
+
+		<hr style="margin-top: 25px; margin-bottom: 25px;"> <!-- Linea divisora -->
+		
+		
+		
+		
+		<div th:if="${errorGlobal}" 	
+		     style="margin-bottom: 20px;"> <!-- Si se detecta un errorGlobal, se va a mostrar el mensaje que manden por aca -->
+		    
+		    <strong>¡Atención!</strong> 
+		    <span th:text="${errorGlobal}"></span>	<!-- Se muestra el mensaje -->
+		    
+		</div>
+		
+		
+		<div class="formulario-edicion" th:if="${modo == 'modificar'}"> 	<!-- Se muestra unicamente cuando modo == modificar, eso lo devuelven los botones -->
+			
+			<div>
+				<h2>Modificar contratos</h2>
+			</div>
+			
+			<form th:object="${contrato}" method="POST" th:action="@{/contratos/modificar}" class="formulario">	<!-- Toma los datos que le devuelva la parte de modificar -->
+			            
+	            <div>
+	                <label>ID del Contrato:</label>	<!-- Se muestra unicamente el ID -->
+	                <input type="text" th:field="*{id}" readonly style="cursor: not-allowed;">
+	            </div>
+
+				<!-- Mismo procedimiento que arriba -->
+				<div class="cargarPropiedad" style="margin-top: 15px;">
+				    <label>Cambiar propiedad de alquiler:</label>
+				    <select th:field="*{propiedad.id}">
+				        <option th:each="prop : ${listaPropiedades}"	
+				                th:value="${prop.id}"
+				                th:text="${prop.direccion}">
+				        </option>
+				    </select>
+				</div>
+
+				
+				
+				<div class="cargarInquilino" style="margin-top: 15px;">
+				    <label>Cambiar Inquilino:</label>
+				    <select th:field="*{inquilino.id}">
+				        <option th:each="inq : ${listaInquilinos}"	
+				                th:value="${inq.id}"
+				                th:text="${inq.nombre}">
+				        </option>
+				    </select>
+				</div>
+				
+				
+				<div class="cargarFecha" style="margin-top: 15px;">
+		            <label>Elegir Fecha de inicio:</label>
+		            <input type="date" th:field="*{fechaInicio}">	
+					
+					<!-- Se añade un mensaje unico para dato a cargar en caso de que este fuera de lo requerido -->
+					<p th:if="${#fields.hasErrors('fechaInicio')}" 
+						th:errors="*{fechaInicio}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+					
+		        </div>
+				
+		        		
+				<div class="cargarDuracionMeses" style="margin-top: 15px;">
+					<label>Cargar la duracion en meses</label>
+					<input type="number" th:field="*{duracionMeses}">
+					
+					<p th:if="${#fields.hasErrors('duracionMeses')}" 
+						th:errors="*{duracionMeses}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+									
+				</div>
+				
+				
+				
+				<div class="cargarImporteMensual" style="margin-top: 15px;">
+					<label>Cargue el importe mensual</label>
+					<input type="number" th:field="*{importeMensual}">
+					
+					<p th:if="${#fields.hasErrors('importeMensual')}" 
+						th:errors="*{importeMensual}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+					
+				</div>
+				
+				
+				
+				<div class="cargarDiaVencimiento" style="margin-top: 15px;">
+					<label>Indique el dia de vencimiento</label>
+					<input type="number" th:field="*{diaVencimientoMensual}">
+					
+					<p th:if="${#fields.hasErrors('diaVencimientoMensual')}" 
+						th:errors="*{diaVencimientoMensual}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+				</div>
+				
+				
+				
+				
+				<div class="cargarDescripcion" style="margin-top: 15px;">
+					<label>Cargar la descripcion</label>
+					<input type="text" th:field="*{descripcion}">
+
+					<p th:if="${#fields.hasErrors('descripcion')}" 
+						th:errors="*{descripcion}" 
+						style="color: red; font-size: 0.9em; margin-top: 5px;">
+					</p>
+					
+				</div>
+
+				
+	            <div class="cargarEstado" style="margin-top: 15px;">
+	                <label>Estado del contrato:</label>
+	                <select th:field="*{estado}">
+	                    <option value="BORRADOR">Borrador</option>
+	                    <option value="ACTIVO">Activo</option>
+	                    <option value="FINALIZADO">Finalizado</option>
+	                    <option value="RESCINDIDO">Rescindido</option>
+	                </select>
+	            </div>
+
+				
+	            <div class="btn-submite" style="margin-top: 25px;">
+	                <button type="submit">Guardar Cambios</button>
+	            </div>
+	        </form>
+			
+			
+			
+		</div>
+		
+		
+		<div class="formulario-borrar" th:if="${modo == 'borrar'}" style="text-align: center; "> <!-- Formulario que se muestra solo cuando se pulsa la parte de borrar -->
+					
+		    <h2 style="color: #dc3545; ">ATENCIÓN!!!</h2>
+		    
+		    <p >¿Estás completamente seguro de que deseas eliminar el contrato número <strong th:text="${contrato.id}"></strong>?</p> 
+		    <p >Inquilino asociado: <strong th:text="${contrato.inquilino.nombre} + ' ' + ${contrato.inquilino.apellido}"></strong></p>
+
+			
+		    <form method="POST" th:action="@{/contratos/Borrar}"> <!-- Formulario que manda el objeto que se quiere eliminar -->
+		        
+		        <input type="hidden" name="id" th:value="${contrato.id}" /> <!-- Devuelve el ID desde un input escondido -->
+
+				
+		        <div style="margin-top: 25px;">
+					
+		            <button type="submit" style="background-color: #dc3545; color: white;"> SÍ, CONFIRMAR BORRADO</button>
+
+		            <a th:href="@{/contratos/modificar}" style="display: inline-block; background-color: #6c757d; color: white;">Cancelar</a>
+		        </div>
+				
+				
+		    </form>
+		</div>
+
+		<div class="volverMenu">
+						<a style="margin-top: 20px;"th:href="@{/}">Volver al Menú Principal</a>
+					</div>
+	</body>
+</html>
