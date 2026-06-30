@@ -1,8 +1,14 @@
 package tuti.desi.entidades;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import tuti.desi.enums.EstadoDisponibilidad;
 import tuti.desi.enums.TipoPropiedad;
+import tuti.desi.historial.HistorialEstadoPropiedad;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Propiedad {
@@ -34,6 +40,9 @@ public class Propiedad {
 
     private boolean eliminada;
 
+    @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL)
+    private List<HistorialEstadoPropiedad> historialEstados = new ArrayList<>();
+
     // Constructores
     public Propiedad() {
     }
@@ -53,6 +62,18 @@ public class Propiedad {
         this.estadoDisp = estadoDisp;
         this.propietario = propietario;
         this.eliminada = eliminada;
+    }
+
+    // Registra el nuevo estado en el historial y actualiza el campo de la entidad.
+    // Llamar siempre que cambie estadoDisp, tanto en alta como en edición.
+    public void cambiarEstado(EstadoDisponibilidad nuevoEstado) {
+        this.estadoDisp = nuevoEstado;
+
+        HistorialEstadoPropiedad registro = new HistorialEstadoPropiedad();
+        registro.setEstado(nuevoEstado);
+        registro.setFechaHora(LocalDateTime.now());
+        registro.setPropiedad(this);
+        this.historialEstados.add(registro);
     }
 
     // Getters
@@ -101,8 +122,12 @@ public class Propiedad {
         return eliminada;
     }
 
+    public List<HistorialEstadoPropiedad> getHistorialEstados() {
+        return historialEstados;
+    }
+
     /**
-     * Helper: "Dirección — Ciudad" para combos
+     * Método auxiliar: devuelve "Dirección — Ciudad" para mostrar en combos
      */
     public String getDireccionCompleta() {
 
@@ -157,5 +182,9 @@ public class Propiedad {
 
     public void setEliminada(boolean eliminada) {
         this.eliminada = eliminada;
+    }
+
+    public void setHistorialEstados(List<HistorialEstadoPropiedad> historialEstados) {
+        this.historialEstados = historialEstados;
     }
 }
