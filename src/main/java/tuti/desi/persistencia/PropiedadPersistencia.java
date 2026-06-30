@@ -56,4 +56,36 @@ public interface PropiedadPersistencia extends JpaRepository<Propiedad, Long> {
      */
     boolean existsByIdAndEliminadaFalse(Long id);
 
+    /**
+     * HU 1.1 - Detectar duplicado en alta:
+     * ¿existe otra propiedad activa con la misma dirección Y ciudad (sin distinguir mayúsculas)?
+     */
+    boolean existsByDireccionIgnoreCaseAndCiudadIgnoreCaseAndEliminadaFalse(
+            String direccion, String ciudad);
+
+    /**
+     * HU 1.3 - Detectar duplicado en edición:
+     * igual al anterior pero excluyendo la propiedad que se está editando (por su id).
+     */
+    boolean existsByDireccionIgnoreCaseAndCiudadIgnoreCaseAndEliminadaFalseAndIdNot(
+            String direccion, String ciudad, Long id);
+
+    /**
+     * HU 1.4 - Búsqueda combinada por dirección, ciudad, tipo y estado.
+     * Si algún parámetro es null o vacío se ignora (actúa como "todos").
+     */
+    @Query("""
+            SELECT p FROM Propiedad p
+            WHERE p.eliminada = false
+              AND (:direccion IS NULL OR :direccion = '' OR LOWER(p.direccion) LIKE LOWER(CONCAT('%', :direccion, '%')))
+              AND (:ciudad    IS NULL OR :ciudad    = '' OR LOWER(p.ciudad)    LIKE LOWER(CONCAT('%', :ciudad,    '%')))
+              AND (:tipo      IS NULL OR p.tipo      = :tipo)
+              AND (:estado    IS NULL OR p.estadoDisp = :estado)
+            """)
+    List<Propiedad> buscarConFiltros(
+            @org.springframework.data.repository.query.Param("direccion") String direccion,
+            @org.springframework.data.repository.query.Param("ciudad")    String ciudad,
+            @org.springframework.data.repository.query.Param("tipo")      TipoPropiedad tipo,
+            @org.springframework.data.repository.query.Param("estado")    EstadoDisponibilidad estado);
+
 }

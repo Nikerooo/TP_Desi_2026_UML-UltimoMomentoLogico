@@ -4,5 +4,6 @@ public enum EstadoContrato {
 	BORRADOR,
 	ACTIVO,
 	FINALIZADO,
-	RESCINDIDO
+	RESCINDIDO, 
+	BORRADO
 }
