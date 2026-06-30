@@ -2,29 +2,25 @@ package tuti.desi.historial;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import tuti.desi.entidades.Factura;
 import tuti.desi.enums.EstadoFactura;
 
 @Entity
 @Table(name = "historial_estado_factura")
 public class HistorialEstadoFactura {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "factura_id")
 	private Factura factura;
-	
+
+	@Enumerated(EnumType.STRING)
 	private EstadoFactura estado;
+
 	private LocalDateTime fechaCambio;
 	
 	// CONSTRUCTORES

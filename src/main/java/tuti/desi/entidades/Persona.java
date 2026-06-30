@@ -47,7 +47,7 @@ public class Persona {
     public Ciudad getCiudad() { return this.ciudad; }
     public boolean isEliminado() { return eliminado; }
 
-    /** Helper: "Apellido, Nombre" — útil en los combos del formulario */
+    /** Método auxiliar: devuelve "Apellido, Nombre" para los combos del formulario */
     public String getNombreCompleto() { return apellido + ", " + nombre; }
 
     // Setters

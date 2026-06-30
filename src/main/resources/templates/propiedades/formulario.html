@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${modoEdicion} ? 'Editar Propiedad #' + ${propiedad.id} : 'Nueva Propiedad'">Propiedad</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <header class="page-header">
+        <h1 th:text="${modoEdicion} ? 'Editar Propiedad #' + ${propiedad.id} : 'Nueva Propiedad'"></h1>
+    </header>
+
+    <!-- Mensaje de error de negocio (viene del controller cuando el servicio rechaza la operación) -->
+    <div th:if="${errorGlobal}" class="alert alert-error" th:text="${errorGlobal}"></div>
+
+    <form th:action="${modoEdicion}
+                      ? @{/propiedades/editar/{id}(id=${propiedad.id})}
+                      : @{/propiedades/nueva}"
+          method="post"
+          th:object="${propiedad}"
+          class="formulario-card">
+
+        <!-- ID: solo lectura en modo edición (HU 1.3: el id no se puede cambiar) -->
+        <div th:if="${modoEdicion}" class="form-group">
+            <label>ID de Propiedad</label>
+            <input type="text" class="form-control readonly" th:value="${propiedad.id}" readonly/>
+            <small class="form-hint">El identificador es de solo lectura.</small>
+        </div>
+
+        <!-- Dirección -->
+        <div class="form-group">
+            <label for="direccion">Dirección <span class="required">*</span></label>
+            <input type="text"
+                   id="direccion"
+                   name="direccion"
+                   class="form-control"
+                   th:value="${propiedad.direccion}"
+                   required
+                   maxlength="255"
+                   placeholder="Ej: Av. Corrientes 1234"/>
+            <small class="form-hint">Obligatoria. Junto con Ciudad no puede repetirse en otra propiedad activa.</small>
+        </div>
+
+        <!-- Ciudad (String, coherente con el modelo ya existente en el repo) -->
+        <div class="form-group">
+            <label for="ciudad">Ciudad <span class="required">*</span></label>
+            <input type="text"
+                   id="ciudad"
+                   name="ciudad"
+                   class="form-control"
+                   th:value="${propiedad.ciudad}"
+                   required
+                   maxlength="100"
+                   placeholder="Ej: Buenos Aires"/>
+            <small class="form-hint">Obligatoria.</small>
+        </div>
+
+        <!-- Tipo de propiedad -->
+        <div class="form-group">
+            <label for="tipo">Tipo de propiedad <span class="required">*</span></label>
+            <select id="tipo" name="tipo" class="form-control" required>
+                <option value="">-- Seleccione un tipo --</option>
+                <option th:each="t : ${tipos}"
+                        th:value="${t.name()}"
+                        th:text="${t.name()}"
+                        th:selected="${propiedad.tipo != null and propiedad.tipo == t}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Cantidad de ambientes -->
+        <div class="form-group">
+            <label for="cantAmbientes">Cantidad de ambientes <span class="required">*</span></label>
+            <input type="number"
+                   id="cantAmbientes"
+                   name="cantAmbientes"
+                   class="form-control"
+                   th:value="${propiedad.cantAmbientes > 0 ? propiedad.cantAmbientes : ''}"
+                   required
+                   min="1"
+                   step="1"
+                   placeholder="Ej: 3"/>
+            <small class="form-hint">Debe ser un número entero mayor o igual a 1.</small>
+        </div>
+
+        <!-- Metros cuadrados -->
+        <div class="form-group">
+            <label for="mtsCuadrados">Metros cuadrados <span class="required">*</span></label>
+            <input type="number"
+                   id="mtsCuadrados"
+                   name="mtsCuadrados"
+                   class="form-control"
+                   th:value="${propiedad.mtsCuadrados > 0 ? propiedad.mtsCuadrados : ''}"
+                   required
+                   min="0.01"
+                   step="0.01"
+                   placeholder="Ej: 75.50"/>
+            <small class="form-hint">Debe ser un número positivo mayor a 0.</small>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+            <label for="descripcion">Descripción <span class="required">*</span></label>
+            <textarea id="descripcion"
+                      name="descripcion"
+                      class="form-control"
+                      rows="4"
+                      required
+                      placeholder="Describa la propiedad: ubicación, características, entorno..."
+                      th:text="${propiedad.descripcion}"></textarea>
+        </div>
+
+        <!-- Comodidades -->
+        <div class="form-group">
+            <label for="comodidades">Comodidades <span class="required">*</span></label>
+            <textarea id="comodidades"
+                      name="comodidades"
+                      class="form-control"
+                      rows="3"
+                      required
+                      placeholder="Ej: Garage, pileta, jardín, balcón, aire acondicionado..."
+                      th:text="${propiedad.comodidades}"></textarea>
+        </div>
+
+        <!-- Estado de disponibilidad -->
+        <div class="form-group">
+            <label for="estadoDisp">Estado de disponibilidad <span class="required">*</span></label>
+            <select id="estadoDisp" name="estadoDisp" class="form-control" required>
+                <option th:each="est : ${estados}"
+                        th:value="${est.name()}"
+                        th:text="${est.name()}"
+                        th:selected="${propiedad.estadoDisp != null and propiedad.estadoDisp == est}">
+                </option>
+            </select>
+            <small class="form-hint"
+                   th:if="${modoEdicion}">
+                Atención: si la propiedad tiene un contrato ACTIVO, no podrá cambiar el estado
+                a DISPONIBLE o INACTIVA hasta que el contrato sea finalizado o rescindido.
+            </small>
+            <small class="form-hint"
+                   th:unless="${modoEdicion}">
+                Estado por defecto: DISPONIBLE.
+            </small>
+        </div>
+
+        <!-- Propietario -->
+        <div class="form-group">
+            <label for="propietarioId">Propietario <span class="required">*</span></label>
+            <select id="propietarioId" name="propietarioId" class="form-control" required>
+                <option value="">-- Seleccione un propietario --</option>
+                <option th:each="per : ${personas}"
+                        th:value="${per.id}"
+                        th:text="${per.getNombreCompleto() + ' (DNI: ' + per.dni + ')'}"
+                        th:selected="${propiedad.propietario != null and propiedad.propietario.id == per.id}">
+                </option>
+            </select>
+            <small class="form-hint">Solo se muestran propietarios activos (no eliminados).</small>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-acciones">
+            <button type="submit" class="btn btn-primary"
+                    th:text="${modoEdicion} ? 'Guardar cambios' : 'Crear propiedad'">
+            </button>
+            <a th:href="@{/propiedades}" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+    </form>
+
+    <div class="page-footer">
+        <a th:href="@{/}" class="btn btn-link">← Inicio</a>
+    </div>
+
+</div>
+
+<script>
+    // Si es un formulario de alta y no hay estado preseleccionado, seleccionar DISPONIBLE por defecto.
+    document.addEventListener('DOMContentLoaded', function () {
+        const estadoSelect = document.getElementById('estadoDisp');
+        if (estadoSelect && !estadoSelect.value) {
+            for (let i = 0; i < estadoSelect.options.length; i++) {
+                if (estadoSelect.options[i].value === 'DISPONIBLE') {
+                    estadoSelect.options[i].selected = true;
+                    break;
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
