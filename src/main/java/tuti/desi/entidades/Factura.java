@@ -41,7 +41,7 @@ public class Factura {
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HistorialEstadoFactura> historialEstados = new ArrayList<>();
 
-    public Factura() {}
+	public Factura() {}
 
     public Long getId()                   { return this.id; }
     public LocalDate getFechaEmision()    { return this.fechaEmision; }
@@ -55,6 +55,8 @@ public class Factura {
     public BigDecimal getInteres()        { return this.interes; }
     public String getConceptoFacturado()  { return this.conceptoFacturado; }
     public Contrato getContrato()         { return this.contrato; }
+    public List<HistorialEstadoFactura> getHistorialEstados() { return historialEstados; }
+    
 
     public void setId(Long id)                      { this.id = id; }
     public void setFechaEmision(LocalDate f)        { this.fechaEmision = f; }
@@ -68,4 +70,5 @@ public class Factura {
     public void setInteres(BigDecimal i)            { this.interes = i; }
     public void setConceptoFacturado(String c)      { this.conceptoFacturado = c; }
     public void setContrato(Contrato c)             { this.contrato = c; }
+    public void setHistorialEstados(List<HistorialEstadoFactura> historialEstados) { this.historialEstados = historialEstados; }
 }
