@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+	<head>
+	    <meta charset="UTF-8"/>
+	    <link rel="stylesheet" th:href="@{/css/estilos.css}"/>
+		<title>Formulario para Factura</title>
+	</head>
+	<body>
+		<div class="container">
+		    <h1>Listado de Facturas</h1>
+		    <a th:href="@{/facturas/nueva}">Nueva Factura</a>
+
+		    <form method="get" th:action="@{/facturas}">
+		        <div>
+		            <label>Contrato:</label>
+		            <select name="contratoId">
+		                <option value="">Todos</option>
+		                <option th:each="c : ${listaContratos}" 
+		                        th:value="${c.id}" 
+		                        th:text="'#' + ${c.id} + ' - ' + ${c.propiedad.direccion}" 
+		                        th:selected="${c.id == filtroContratoId}">
+		                </option>
+		            </select>
+		        </div>
+
+		        <div>
+		            <label>Estado:</label>
+		            <select name="estado">
+		                <option value="">Todos</option>
+		                <option th:each="e : ${listaEstados}" 
+		                        th:value="${e}" 
+		                        th:text="${e}"
+		                        th:selected="${e == filtroEstado}">
+		                </option>
+		            </select>
+		        </div>
+
+		        <div>
+		            <label>Fecha Desde:</label>
+		            <input type="date" name="fechaDesde" th:value="${filtroFechaDesde}"/>
+		        </div>
+
+		        <div>
+		            <label>Fecha Hasta:</label>
+		            <input type="date" name="fechaHasta" th:value="${filtroFechaHasta}"/>
+		        </div>
+
+		        <div>
+		            <br/>
+		            <button type="submit">Filtrar</button>
+		            <a th:href="@{/facturas}">Limpiar</a>
+		        </div>
+		    </form>
+
+		    <hr/>
+
+		    <table border="2">
+		        <thead>
+		            <tr>
+		                <th>ID</th>
+		                <th>Contrato</th>
+		                <th>Propiedad</th>
+		                <th>Inquilino</th>
+		                <th>Emisión</th>
+		                <th>Vencimiento</th>
+		                <th>Importe</th>
+		                <th>Estado</th>
+		                <th>Acciones</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            <tr th:each="f : ${facturas}">
+		                <td th:text="${f.id}"></td>
+		                <td th:text="'#' + ${f.contrato.id}"></td>
+		                <td th:text="${f.contrato.propiedad.direccion}"></td>
+		                <td th:text="${f.contrato.inquilino.nombre}"></td>
+		                <td th:text="${f.fechaEmision}"></td>
+		                <td th:text="${f.fechaVencimiento}"></td>
+		                <td th:text="${f.importe}"></td>
+		                <td th:text="${f.estado}"></td>
+		                <td>
+		                    <a th:href="@{/facturas/editar/{id}(id=${f.id})}">Editar</a>
+		                    <form th:action="@{/facturas/eliminar/{id}(id=${f.id})}" method="post" style="display:inline;">
+		                        <button type="submit" onclick="return confirm('Esta seguro que quiere eliminar esta factura?')">Eliminar</button>
+		                    </form>
+		                </td>
+		            </tr>
+		            <tr th:if="${facturas.isEmpty()}">
+		                <td colspan="9">No hay facturas registradas</td>
+		            </tr>
+		        </tbody>
+		    </table>
+		</div>
+	</body>
+</html>
