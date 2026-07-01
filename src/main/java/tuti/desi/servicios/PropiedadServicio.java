@@ -33,7 +33,7 @@ public class PropiedadServicio {
      * contratoPersistencia, coménta el @Autowired y los bloques marcados.
      */
     @Autowired
-    private contratoPersistencia contratoRepo;
+    private ContratoPersistencia contratoRepo;
 
     // ──────────────────────────────────────────────────────────────────────────
     // HU 1.1 - Alta de Propiedad
