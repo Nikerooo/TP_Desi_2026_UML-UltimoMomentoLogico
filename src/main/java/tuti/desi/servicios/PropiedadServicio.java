@@ -12,7 +12,7 @@ import tuti.desi.enums.EstadoDisponibilidad;
 import tuti.desi.enums.TipoPropiedad;
 import tuti.desi.persistencia.PersonaPersistencia;
 import tuti.desi.persistencia.PropiedadPersistencia;
-import tuti.desi.persistencia.contratoPersistencia;
+import tuti.desi.persistencia.ContratoPersistencia;
 
 import java.util.List;
 
