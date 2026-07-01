@@ -16,7 +16,7 @@ import tuti.desi.enums.EstadoFactura;
 
 public interface FacturaPersistencia extends JpaRepository<Factura, Long>{
     
-	List<Factura> findByEliminada();
+	List<Factura> findByEliminada(boolean eliminada);
 		
     // Eliminacion logica
     @Modifying

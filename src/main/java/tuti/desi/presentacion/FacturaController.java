@@ -21,7 +21,6 @@ import tuti.desi.enums.EstadoContrato;
 import tuti.desi.enums.EstadoFactura;
 import tuti.desi.enums.MedioPago;
 import tuti.desi.persistencia.ContratoPersistencia;
-import tuti.desi.persistencia.FacturaPersistencia;
 import tuti.desi.servicios.FacturaServicios;
 
 @Controller 
@@ -29,9 +28,6 @@ import tuti.desi.servicios.FacturaServicios;
 public class FacturaController {
     @Autowired
     private FacturaServicios facturaServicios;
-    
-    @Autowired
-    private FacturaPersistencia facturaRepo;
 
     @Autowired
     private ContratoPersistencia contratoRepo;

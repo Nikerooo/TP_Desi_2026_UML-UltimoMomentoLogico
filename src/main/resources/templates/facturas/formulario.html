@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+	<head>
+	  <meta charset="UTF-8" />
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	  <link rel="stylesheet" href="/static/css/cargarContrato.css">
+	  <title>Nueva Factura</title>
+	</head>
+	
+	<body>
+		<div class="container">
+		    <h1 th:if="${!modoEdicion}">Nueva Factura</h1>
+		    <h1 th:if="${modoEdicion}">Editar Factura</h1>
+
+		    <form th:action="@{${modoEdicion} ? '/facturas/editar/' + factura.id : '/facturas/guardar'}" 
+		          th:object="${factura}" method="post">
+
+		        <div class="form-group">
+		            <label>Contrato:</label>
+		            <select th:field="*{contrato.id}" class="form-control">
+		                <option value="">Seleccionar contrato</option>
+		                <option th:each="c : ${listaContratos}" 
+		                        th:value="${c.id}" 
+		                        th:text="'Contrato #' + ${c.id} + ' - Propiedad: ' + ${c.propiedad?.direccion} + ' - Inquilino: ' + ${c.inquilino?.nombre}">
+		                </option>
+		            </select>
+		        </div>
+
+		        <div class="form-group">
+		            <label>Concepto:</label>
+		            <input type="text" th:field="*{conceptoFacturado}" class="form-control" required/>
+		        </div>
+
+		        <div class="form-group">
+		            <label>Fecha de emision:</label>
+		            <input type="date" th:field="*{fechaEmision}" class="form-control" required/>
+		        </div>
+
+		        <div class="form-group">
+		            <label>Fecha de vencimiento:</label>
+		            <input type="date" th:field="*{fechaVencimiento}" class="form-control" required/>
+		        </div>
+
+		        <div class="form-group">
+		            <label>Importe:</label>
+		            <input type="number" step="0.01" th:field="*{importe}" class="form-control" required/>
+		        </div>
+
+		        <div class="form-group" th:if="${modoEdicion}">
+		            <label>Estado:</label>
+		            <select th:field="*{estado}" class="form-control">
+		                <option th:each="e : ${listaEstados}" th:value="${e}" th:text="${e}"></option>
+		            </select>
+		        </div>
+
+		        <div th:if="${modoEdicion}">
+		            <h2>Datos de pago</h2>
+		         
+		            <div class="form-group">
+		                <label>Fecha de pago:</label>
+		                <input type="date" th:field="*{fechaPago}" class="form-control"/>
+		            </div>
+
+		            <div class="form-group">
+		                <label>Medio de pago:</label>
+		                <select th:field="*{medio}" class="form-control">
+		                    <option value="">Selecciona uno</option>
+		                    <option th:each="m : ${listaMediosPago}" th:value="${m}" th:text="${m}"></option>
+		                </select>
+		            </div>
+
+		            <div class="form-group">
+		                <label>Importe pagado:</label>
+		                <input type="number" step="0.01" th:field="*{importePago}" class="form-control"/>
+		            </div>
+
+		            <div class="form-group">
+		                <label>Interes pagado:</label>
+		                <input type="number" step="0.01" th:field="*{interes}" class="form-control"/>
+		            </div>
+		        </div>
+
+		        <button type="submit" th:text="${modoEdicion} ? 'Guardar Cambios' : 'Crear Factura'"></button>
+		    </form>
+		</div>
+	</body>
+</html>

@@ -23,7 +23,7 @@ public class Contrato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotNull(message = "Debe ingresar una fecha de inicio")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -82,7 +82,7 @@ public class Contrato {
     
     // Getters
     
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -136,7 +136,7 @@ public class Contrato {
 	
 	// Setters
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
