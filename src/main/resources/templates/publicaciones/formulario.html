@@ -42,7 +42,7 @@
                     <option value="">-- Seleccione una propiedad --</option>
                     <option th:each="p : ${propiedades}"
                             th:value="${p.id}"
-                            th:text="${p.getDireccionCompleta() + ' (' + p.tipo.descripcion + ')'}"
+                            th:text="${p.getDireccionCompleta() + ' (' + p.tipo.name() + ')'}"
                             th:selected="${publicacion.propiedad != null and publicacion.propiedad.id == p.id}">
                     </option>
                 </select>
